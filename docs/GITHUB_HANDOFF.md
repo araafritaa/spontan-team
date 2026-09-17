@@ -20,22 +20,21 @@ Workspace lokal: `D:\Spontan-Team`.
 
 Push menyimpan source ke GitHub; tidak otomatis menggabungkan atau mengubah
 project Vercel Formula Rescue lama yang memakai repo `formula-rescue`.
-Backend gabungan saat checkpoint ini berjalan lokal. Frontend Formula Rescue
-masih default memakai `https://formula-rescue-api-gold.vercel.app` kecuali
-server env `FORMULARESCUE_API_URL` diubah. AI wizard belum dihubungkan ke API baru.
-
-Untuk deployment berikutnya, pisahkan dua project Vercel dari repo Spontan:
-
-1. Frontend: Next.js, Root Directory `frontend`.
-2. Backend gabungan: source root repo, Python/FastAPI. **Belum ada konfigurasi
-   deployment root yang diverifikasi**: entrypoint, CPU Linux dependencies,
-   artifact inclusion, bundle limit, clean runtime dan CORS perlu disiapkan/dicek.
+Backend gabungan saat checkpoint ini berjalan lokal. Konfigurasi root sekarang
+menargetkan **satu project Vercel Services**, bukan dua project: frontend Next.js
+di `frontend`, backend FastAPI di root dengan binding internal. Panduan:
+[VERCEL_SERVICES_SETUP.md](VERCEL_SERVICES_SETUP.md).
+Frontend memakai binding runtime lebih dulu; jika binding/config tidak ada di
+Vercel, proxy gagal dengan 503, bukan diam-diam memakai API lama. Fallback lama
+hanya berlaku di pengembangan non-Vercel. AI wizard belum dihubungkan ke API baru.
+Schema, globs, pin dependency, tes lokal dan build frontend sudah diperiksa;
+clean install Linux, bundle akhir dan koneksi runtime Vercel masih pending.
 
 `Hackathon/vercel.json` dan `Hackathon/pyproject.toml` lama bukan konfigurasi
 backend gabungan baru dan tidak disertakan pada paket serving minimal ini.
 Jangan memilih Root Directory `Hackathon` untuk backend gabungan.
-Sesudah API baru online dan diuji, arahkan frontend ke URL API baru dan
-hubungkan wizard AI. Deployment lama tetap terpisah sampai keputusan migrasi.
+Sesudah Services online, uji readiness lewat frontend dan hubungkan wizard AI
+pada tahap berikutnya. Deployment lama tetap terpisah sampai keputusan migrasi.
 
 ## Teman mengambil project
 

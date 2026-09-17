@@ -1,15 +1,11 @@
 // Only fixed FormulaRescue operations are forwarded. Never accept a target URL from users.
-const upstreamBase = (process.env.FORMULARESCUE_API_URL ?? "https://formula-rescue-api-gold.vercel.app").replace(/\/$/, "");
+import { backendUrl } from "../../../../lib/server-backend";
 type Context = { params: Promise<{ action: string }> };
 export const runtime = "nodejs";
 
 async function forward(path: string, method: string, body?: string) {
   try {
-    const base = new URL(upstreamBase);
-    if (base.protocol !== "https:" && !(base.protocol === "http:" && ["localhost", "127.0.0.1"].includes(base.hostname))) {
-      return Response.json({ detail: "Konfigurasi backend tidak valid." }, { status: 503 });
-    }
-    const response = await fetch(upstreamBase + path, {
+    const response = await fetch(backendUrl(path), {
       method, body, headers: body ? { "Content-Type": "application/json" } : undefined,
       cache: "no-store", redirect: "error", signal: AbortSignal.timeout(45000),
     });
@@ -27,6 +23,7 @@ async function forward(path: string, method: string, body?: string) {
 export async function GET(request: Request, context: Context) {
   const { action } = await context.params;
   if (action === "health") return forward("/health", "GET");
+  if (action === "ready") return forward("/ready", "GET");
   if (action !== "formulas") return Response.json({ detail: "Endpoint tidak tersedia." }, { status: 404 });
   const query = new URL(request.url).searchParams;
   const offset = Number(query.get("offset") ?? 0), limit = Number(query.get("limit") ?? 100);

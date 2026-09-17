@@ -1,0 +1,34 @@
+[project]
+name = "spontan-formulation-api"
+version = "0.1.0"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "fastapi==0.136.1",
+    "uvicorn==0.46.0",
+    "pydantic==2.13.3",
+    "numpy==2.4.4",
+    "pandas==3.0.2",
+    "scipy==1.17.1",
+    "scikit-learn==1.8.0",
+    "joblib==1.5.3",
+    "xgboost-cpu==3.4.1; sys_platform == 'linux' and platform_machine == 'x86_64'",
+    "xgboost==3.4.1; sys_platform != 'linux' or platform_machine != 'x86_64'",
+    "starlette==1.6.0",
+    "idna==3.20",
+    "anyio==4.13.0",
+    "annotated-doc==0.0.4",
+    "annotated-types==0.7.0",
+    "click==8.3.3",
+    "h11==0.16.0",
+    "pydantic-core==2.46.3",
+    "python-dateutil==2.9.0.post0",
+    "six==1.17.0",
+    "threadpoolctl==3.6.0",
+    "typing-extensions==4.15.0",
+    "typing-inspection==0.4.2",
+    "tzdata==2025.3; sys_platform == 'win32'",
+    "colorama==0.4.6; sys_platform == 'win32'",
+]
+
+[tool.vercel]
+entrypoint = "backend.main:app"

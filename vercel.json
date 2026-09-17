@@ -1,0 +1,32 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "services": {
+    "frontend": {
+      "root": "frontend",
+      "framework": "nextjs",
+      "bindings": [
+        {
+          "type": "service",
+          "service": "backend",
+          "format": "url",
+          "env": "SPONTAN_BACKEND_URL"
+        }
+      ]
+    },
+    "backend": {
+      "root": ".",
+      "framework": "fastapi",
+      "entrypoint": "backend.main:app",
+      "functions": {
+        "backend/main.py": {
+          "maxDuration": 60,
+          "includeFiles": "{backend/*.py,Hackathon/{backend,rescue}/*.py,Hackathon/data/processed/*.csv,Hackathon/ml/artifacts/*.json,ml/*.py,ml/artifacts/mercurio_polynomial_ridge_v1/{*.joblib,model_metadata.json,prediction_example.json}}",
+          "excludeFiles": "{frontend/**,docs/**,tmp/**,temp/**,data/**,ml/{tests,benchmarks}/**,ml/artifacts/**/*.csv,**/__pycache__/**,**/*.{pyc,md,xlsx,zip,png},**/.git/**,**/node_modules/**}"
+        }
+      }
+    }
+  },
+  "rewrites": [
+    { "source": "/(.*)", "destination": { "service": "frontend" } }
+  ]
+}

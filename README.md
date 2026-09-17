@@ -14,8 +14,11 @@ FastAPI lokal sudah menyatukan Formula Rescue (XGBoost) dan AI Reformulation
 Handoff repo baru, batas file yang diikutkan dan status deployment:
 [docs/GITHUB_HANDOFF.md](docs/GITHUB_HANDOFF.md).
 
-Frontend AI belum terhubung pada checkpoint backend ini, deployment belum
-diubah, dan penyimpanan/lab feedback bulanan masih rencana. Bagian di bawah
+Konfigurasi satu project **Vercel Services** sekarang disiapkan untuk frontend
+dan backend gabungan. Panduan dan batas verifikasinya:
+[docs/VERCEL_SERVICES_SETUP.md](docs/VERCEL_SERVICES_SETUP.md).
+Runtime Vercel belum diverifikasi; project Formula Rescue lama tidak diubah.
+Frontend AI belum terhubung, dan penyimpanan/lab feedback bulanan masih rencana. Bagian di bawah
 tetap panduan starter/team, bukan klaim semua integrasi sudah selesai.
 
 ## Mulai
