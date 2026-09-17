@@ -2,8 +2,10 @@
 
 import { useMemo, useState } from "react";
 import type { SessionAnalysis } from "../lib/session-analysis";
+import ExperimentalLibrary from "./experimental-library";
+import { useValidationLibrary } from "../lib/use-validation-library";
 
-type Tab = "Clear Insight" | "Formula Rescue" | "AI Reformulations";
+type Tab = "Clear Insight" | "Formula Rescue" | "AI Reformulations" | "Experimental Data";
 
 function formatDate(value: string) {
   return new Intl.DateTimeFormat("en-GB", { dateStyle: "medium", timeStyle: "short" }).format(new Date(value));
@@ -24,19 +26,21 @@ function download(row: SessionAnalysis, raw: boolean) {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-export default function Library({ analyses, onUseInsight }: { analyses: SessionAnalysis[]; onUseInsight?: (text: string) => void }) {
-  const [tab, setTab] = useState<Tab>("Clear Insight");
+export default function Library({ analyses, onUseInsight, initialTab = "Clear Insight", initialRecordId = "" }: { analyses: SessionAnalysis[]; onUseInsight?: (text: string) => void; initialTab?: Tab; initialRecordId?: string }) {
+  const [tab, setTab] = useState<Tab>(initialTab);
   const [order, setOrder] = useState<"new" | "old">("new");
   const [detailId, setDetailId] = useState("");
   const [advanced, setAdvanced] = useState(false);
+  const validation = useValidationLibrary();
+  const experimental = tab === "Experimental Data";
   const rows = useMemo(() => analyses.filter(item => tab === "Formula Rescue" ? item.kind === "rescue" : item.kind === "reformulation" && (tab !== "Clear Insight" || Boolean(item.insight.trim()))).sort((a, b) => (order === "new" ? -1 : 1) * a.createdAt.localeCompare(b.createdAt)), [analyses, order, tab]);
   const detail = rows.find(item => item.id === detailId);
 
   return <section className="library-feature">
-    <p className="eyebrow">SESSION DATASET LIBRARY</p><h1>From analysis to<br /><span>traceable evidence.</span></h1><p>Data pada halaman ini hanya berasal dari API run yang berhasil selama sesi browser saat ini.</p>
-    <div className="library-tabs" role="tablist" aria-label="Dataset category">{(["Clear Insight", "Formula Rescue", "AI Reformulations"] as Tab[]).map(item => <button role="tab" aria-selected={tab === item} aria-pressed={tab === item} key={item} onClick={() => { setTab(item); setDetailId(""); setAdvanced(false); }}>{item}</button>)}</div>
-    <div className="library-toolbar"><label>Sort by date <select value={order} onChange={event => setOrder(event.target.value as "new" | "old")}><option value="new">Newest first</option><option value="old">Oldest first</option></select></label><span className="badge">{rows.length} SESSION RECORD{rows.length === 1 ? "" : "S"}</span></div>
-    {!detail ? rows.length ? <div className="session-grid">{rows.map(row => <article className="session-card" key={row.id}><span className="badge">{row.kind === "rescue" ? "FORMULA RESCUE" : tab.toUpperCase()}</span><button className="session-title" onClick={() => setDetailId(row.id)}><h2>{tab === "Clear Insight" ? row.insight : row.title}</h2></button><time dateTime={row.createdAt}>{formatDate(row.createdAt)}</time><p>{row.summary}</p><div className="session-card-footer"><span className="status-pill status-complete">{row.status}</span><button className="mode-toggle" onClick={() => download(row, false)}>Download results</button></div></article>)}</div> : <div className="empty-state"><h2>No session data yet</h2><p>Run {tab === "Formula Rescue" ? "Formula Rescue" : "a reformulation analysis"} successfully. Its real response will then appear here.</p></div>
+    <p className="eyebrow">SESSION DATASET LIBRARY</p><h1>From analysis to<br /><span>traceable evidence.</span></h1><p>Analysis sessions come from successful API runs. Experimental Data contains saved candidate validation plans and lab results on this browser.</p>
+    <div className="library-tabs" role="tablist" aria-label="Dataset category">{(["Clear Insight", "Formula Rescue", "AI Reformulations", "Experimental Data"] as Tab[]).map(item => <button role="tab" aria-selected={tab === item} aria-pressed={tab === item} key={item} onClick={() => { setTab(item); setDetailId(""); setAdvanced(false); }}>{item}</button>)}</div>
+    <div className="library-toolbar"><label>Sort by date <select value={order} onChange={event => setOrder(event.target.value as "new" | "old")}><option value="new">Newest first</option><option value="old">Oldest first</option></select></label><span className="badge">{experimental ? validation.records.length : rows.length} {experimental ? "VALIDATION RECORDS" : "SESSION RECORDS"}</span></div>
+    {experimental ? <ExperimentalLibrary {...validation} order={order} initialRecordId={initialRecordId}/> : !detail ? rows.length ? <div className="session-grid">{rows.map(row => <article className="session-card" key={row.id}><span className="badge">{row.kind === "rescue" ? "FORMULA RESCUE" : tab.toUpperCase()}</span><button className="session-title" onClick={() => setDetailId(row.id)}><h2>{tab === "Clear Insight" ? row.insight : row.title}</h2></button><time dateTime={row.createdAt}>{formatDate(row.createdAt)}</time><p>{row.summary}</p><div className="session-card-footer"><span className="status-pill status-complete">{row.status}</span><button className="mode-toggle" onClick={() => download(row, false)}>Download results</button></div></article>)}</div> : <div className="empty-state"><h2>No session data yet</h2><p>Run {tab === "Formula Rescue" ? "Formula Rescue" : "a reformulation analysis"} successfully. Its real response will then appear here.</p></div>
     : <section className="library-detail"><button className="back" onClick={() => { setDetailId(""); setAdvanced(false); }}>← Back to library</button><div className="detail-heading"><div><span className="badge">{detail.kind === "rescue" ? "FORMULA RESCUE" : "AI REFORMULATION"}</span><h2>{detail.title}</h2><time dateTime={detail.createdAt}>{formatDate(detail.createdAt)}</time></div><button className="mode-toggle" onClick={() => download(detail, advanced)}>Download {advanced ? "session JSON" : "results CSV"}</button></div>
       <div className="simple-detail"><dl className="review-list"><dt>Status</dt><dd>{detail.status}</dd><dt>Insight / goal</dt><dd>{detail.insight || "No contextual insight was entered."}</dd><dt>Summary</dt><dd>{detail.summary}</dd></dl>{tab === "Clear Insight" && onUseInsight && <button className="secondary" onClick={() => onUseInsight(detail.insight)}>Use this insight in New Analysis →</button>}</div>
       <button className="mode-toggle advanced-toggle" onClick={() => setAdvanced(value => !value)}>{advanced ? "Hide Session Detail" : "Open Session Detail"}</button>

@@ -86,7 +86,7 @@ test("empty result is accepted; fabricated/malformed results and provenance are 
 });
 test("client surfaces HTTP/network failures without fallback predictions", async () => {
   for (const status of [422, 429, 503]) await assert.rejects(() => api(async () => Response.json({ detail: "Controlled failure" }, { status })).optimizeComposition({}), /Controlled failure/);
-  await assert.rejects(() => api(async () => { throw Error("Network failure"); }).optimizeComposition({}), /Koneksi AI backend gagal/);
+  await assert.rejects(() => api(async () => { throw Error("Network failure"); }).optimizeComposition({}), /AI engine connection failed/);
 });
 test("proxy forwards only fixed operations with no cookies, redirect or caching", async () => {
   let call; const r = route(async (url, options) => { call = { url, options }; return Response.json(emptyResult()); });
@@ -115,7 +115,7 @@ test("missing configuration fails closed; upstream errors are sanitized", async 
 
 
 test("product selection sets brand, category and distinct factor baseline, without version", () => {
-  assert.equal(draft.validateStep(0, draft.initialDraft()), "Pilih brand dan product dari katalog backend.");
+  assert.equal(draft.validateStep(0, draft.initialDraft()), "Choose a brand and product from the model catalog.");
   const second = profile(); second.product_id = "second"; second.brand = "Emina"; second.category_name = "Gel Moisturizer"; second.factors[0].baseline = 3;
   const d = draft.selectProduct(validDraft(), second);
   assert.equal(d.brand, "Emina"); assert.equal(d.category, "Gel Moisturizer");
@@ -133,9 +133,9 @@ test("catalog client and GET proxy forward only products and surface failures", 
   assert.equal(call.url.href, "http://backend.internal/ai-reformulation/products");
   assert.equal((await r.GET(req, context("predict"))).status, 404);
   assert.equal((await route(() => { throw Error("Must not fetch"); }, {}).GET(req, context("products"))).status, 503);
-  await assert.rejects(() => api(async () => { throw Error("Offline"); }).fetchProductCatalog(), /Katalog produk tidak dapat dimuat/);
+  await assert.rejects(() => api(async () => { throw Error("Offline"); }).fetchProductCatalog(), /product catalog could not be loaded/);
 });
 test("optimizer response for a different product is rejected", async () => {
   const result = emptyResult(); result.product.product_id = "wrong-product";
-  await assert.rejects(() => api(async () => Response.json(result)).optimizeComposition(draft.buildOptimizationRequest(validDraft())), /tidak sesuai request/);
+  await assert.rejects(() => api(async () => Response.json(result)).optimizeComposition(draft.buildOptimizationRequest(validDraft())), /does not match the request/);
 });

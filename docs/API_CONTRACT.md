@@ -2,6 +2,17 @@
 
 Status: unified backend and AI frontend wiring implemented locally, version 0.1.0. Vercel runtime deployment is not yet verified. Team owner/reviewer: TBD.
 
+## Candidate validation persistence (2026-09-18)
+
+Both engines open dedicated Lab Validation views from candidate cards, supporting selected tests, Pending / Testing plans,
+Completed actual results and Needs revision outcomes. Saved plans/results survive
+refresh in this browser via versioned localStorage and appear under Dataset Library
+→ Experimental Data. They include exact execution snapshots and model provenance.
+This does not change model/API inference contracts or introduce backend persistence.
+No account/device synchronization or immediate retraining is implemented.
+Unsupported predictions remain unavailable; numeric comparisons require explicit
+scale/protocol confirmation. See [workflow details](CANDIDATE_VALIDATION_WORKFLOW.md).
+
 ## Unified backend — implemented contract (2026-09-18)
 
 Entrypoint: `backend.main:app`, run from repository root. Example local base URL:

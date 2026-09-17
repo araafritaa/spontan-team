@@ -53,7 +53,7 @@ function composition(value: unknown, profile: ProductProfile): boolean { return 
 function provenance(value: Record<string, unknown>): boolean { return typeof value.model_version === "string" && !!value.model_version &&
   value.data_origin === "SYNTHETIC_PROTOTYPE_DATA" && value.disclaimer === AI_DISCLAIMER; }
 export function validateOptimization(value: unknown): asserts value is OptimizationResult {
-  const invalid = () => { throw new Error("Respons optimizer tidak valid. Tidak ada hasil sintetis pengganti."); };
+  const invalid = () => { throw new Error("Invalid optimizer response. No substitute predictions are fabricated."); };
   if (!object(value) || !provenance(value) || value.mode !== "model_assisted_product_search" || !product(value.product) ||
       !object(value.baseline) || !composition(value.baseline.composition, value.product) || !responses(value.baseline.predicted_responses) ||
       !object(value.baseline.constraint_checks) || !object(value.target_constraints) || !Object.keys(value.target_constraints).length ||
@@ -89,26 +89,26 @@ async function parse(response: Response, fallback: string): Promise<unknown> {
 }
 export async function fetchProductCatalog(signal?: AbortSignal): Promise<ProductCatalog> {
   const response = await fetch("/api/ai-reformulation/products", { cache: "no-store", signal: signal ? AbortSignal.any([signal, AbortSignal.timeout(15000)]) : AbortSignal.timeout(15000) })
-    .catch(cause => { if (signal?.aborted) throw cause; throw new Error("Katalog produk tidak dapat dimuat dari backend."); });
-  const value = await parse(response, "Katalog produk tidak tersedia.");
+    .catch(cause => { if (signal?.aborted) throw cause; throw new Error("The product catalog could not be loaded from the engine."); });
+  const value = await parse(response, "Product catalog unavailable.");
   if (!object(value) || value.data_origin !== "SYNTHETIC_PROTOTYPE_DATA" || value.disclaimer !== AI_DISCLAIMER || typeof value.notice !== "string" ||
-      !Array.isArray(value.products) || !value.products.length || !value.products.every(product)) throw new Error("Respons katalog produk tidak valid.");
+      !Array.isArray(value.products) || !value.products.length || !value.products.every(product)) throw new Error("Invalid product catalog response.");
   return value as unknown as ProductCatalog;
 }
 async function request(action: "predict" | "optimize", body: unknown, signal?: AbortSignal): Promise<unknown> {
   const timeout = AbortSignal.timeout(50000);
   const response = await fetch("/api/ai-reformulation/" + action, { method: "POST", headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body), cache: "no-store", signal: signal ? AbortSignal.any([signal, timeout]) : timeout })
-    .catch(cause => { if (signal?.aborted) throw cause; throw new Error("Koneksi AI backend gagal atau waktu proses habis. Coba kembali."); });
-  return parse(response, "AI backend tidak dapat memproses request.");
+    .catch(cause => { if (signal?.aborted) throw cause; throw new Error("AI engine connection failed or timed out. Please try again."); });
+  return parse(response, "The AI engine could not process this request.");
 }
 export async function predictComposition(productId: string, input: Composition, signal?: AbortSignal): Promise<Prediction> {
   const value = await request("predict", { product_id: productId, composition: input }, signal);
-  if (!object(value) || !provenance(value) || !product(value.product) || value.product.product_id !== productId || !responses(value.predicted_responses)) throw new Error("Respons prediksi baseline tidak valid.");
+  if (!object(value) || !provenance(value) || !product(value.product) || value.product.product_id !== productId || !responses(value.predicted_responses)) throw new Error("Invalid baseline prediction response.");
   return value as unknown as Prediction;
 }
 export async function optimizeComposition(input: OptimizationRequest, signal?: AbortSignal): Promise<OptimizationResult> {
   const value = await request("optimize", input, signal); validateOptimization(value);
-  if (value.product.product_id !== input.product_id) throw new Error("Product hasil optimizer tidak sesuai request.");
+  if (value.product.product_id !== input.product_id) throw new Error("The optimizer product does not match the request.");
   return value;
 }

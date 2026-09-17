@@ -16,18 +16,18 @@ export function selectProduct(draft: ReformulationDraft, profile: ProductProfile
     confirmed: false };
 }
 export function validateStep(step: number, draft: ReformulationDraft): string {
-  if (step === 0 && (!draft.productId || !draft.brand || !draft.product || !draft.category)) return "Pilih brand dan product dari katalog backend.";
-  if (step === 1 && (!draft.insight.trim() || !draft.confirmed)) return "Isi clean insight dan konfirmasi target teknis oleh R&D.";
-  if (step === 1 && (!Number.isFinite(draft.targetValue) || draft.targetValue < 0 || draft.targetValue > (draft.target === "stickiness" ? 10 : 1000000))) return "Isi angka target valid: hydration ratio ≥ 0 atau stickiness 0–10.";
-  if (step === 1 && draft.target === "hydration" && draft.stickinessLimit !== null && (!Number.isFinite(draft.stickinessLimit) || draft.stickinessLimit < 0 || draft.stickinessLimit > 10)) return "Batas stickiness harus 0–10.";
+  if (step === 0 && (!draft.productId || !draft.brand || !draft.product || !draft.category)) return "Choose a brand and product from the model catalog.";
+  if (step === 1 && (!draft.insight.trim() || !draft.confirmed)) return "Enter an insight and confirm the technical R&D target.";
+  if (step === 1 && (!Number.isFinite(draft.targetValue) || draft.targetValue < 0 || draft.targetValue > (draft.target === "stickiness" ? 10 : 1000000))) return "Enter a valid target: hydration ratio ≥ 0 or stickiness score 0–10.";
+  if (step === 1 && draft.target === "hydration" && draft.stickinessLimit !== null && (!Number.isFinite(draft.stickinessLimit) || draft.stickinessLimit < 0 || draft.stickinessLimit > 10)) return "Stickiness limit must be between 0 and 10.";
   if (step === 2) {
-    if (draft.ingredients.length !== 3 || !FACTORS.every(f => draft.ingredients.filter(i => i.feature === f.feature).length === 1)) return "Profil harus memiliki tepat tiga faktor.";
+    if (draft.ingredients.length !== 3 || !FACTORS.every(f => draft.ingredients.filter(i => i.feature === f.feature).length === 1)) return "The profile must contain exactly three factors.";
     for (const ingredient of draft.ingredients) {
-      if (!Number.isFinite(ingredient.concentration) || (![ingredient.min, ingredient.max].every(Number.isFinite))) return "Konsentrasi dan batas harus berupa angka finite.";
-      if (ingredient.min < ingredient.profileMin || ingredient.max > ingredient.profileMax || ingredient.min > ingredient.max || ingredient.concentration < ingredient.min || ingredient.concentration > ingredient.max) return `Periksa batas profil sintetis ${ingredient.name}.`;
+      if (!Number.isFinite(ingredient.concentration) || (![ingredient.min, ingredient.max].every(Number.isFinite))) return "Concentrations and bounds must be finite numbers.";
+      if (ingredient.min < ingredient.profileMin || ingredient.max > ingredient.profileMax || ingredient.min > ingredient.max || ingredient.concentration < ingredient.min || ingredient.concentration > ingredient.max) return `Check the synthetic profile bounds for ${ingredient.name}.`;
     }
-    if (draft.ingredients.reduce((sum, item) => sum + item.concentration, 0) > 100) return "Total tiga faktor tidak boleh melebihi 100%.";
-    if (![draft.temperature, draft.speed, draft.duration].every(Number.isFinite) || draft.temperature < 0 || draft.temperature > 150 || draft.speed <= 0 || draft.duration <= 0) return "Periksa suhu 0–150 °C, speed, dan durasi positif.";
+    if (draft.ingredients.reduce((sum, item) => sum + item.concentration, 0) > 100) return "The total concentration of the three factors must not exceed 100%.";
+    if (![draft.temperature, draft.speed, draft.duration].every(Number.isFinite) || draft.temperature < 0 || draft.temperature > 150 || draft.speed <= 0 || draft.duration <= 0) return "Check temperature (0–150 °C) and positive mixing speed and duration.";
   }
   return "";
 }

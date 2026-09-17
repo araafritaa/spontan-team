@@ -7,6 +7,7 @@ export type RescueCandidate = {
   ingredients: Ingredient[];
 };
 export type ReformulateResponse = {
+  model_version?: string; catalog_version?: string;
   mode: string; original_formula: { formula_id: number; historical_observed_stability: boolean; ingredients: Ingredient[] };
   constraint: { type: "ingredient_unavailable"; feature_name: string; display_name: string; original_concentration_pct: number };
   eligible_candidate_count: number; ranking_weights: Record<string, number>; candidates: RescueCandidate[]; disclaimer: string;
@@ -15,13 +16,13 @@ type FormulaPage = { total: number; offset: number; count: number; formulas: For
 export const rescueApiBase = "/api/formula-rescue";
 async function read<T>(response: Response): Promise<T> {
   const body = await response.json().catch(() => null);
-  if (!response.ok) throw new Error(typeof body?.detail === "string" ? body.detail : "API tidak dapat menyelesaikan request.");
-  if (!body) throw new Error("Respons API tidak valid.");
+  if (!response.ok) throw new Error(typeof body?.detail === "string" ? body.detail : "The engine could not complete this request.");
+  if (!body) throw new Error("Invalid engine response.");
   return body as T;
 }
 export async function getAllFormulas(signal?: AbortSignal): Promise<FormulaSummary[]> {
   const first = await read<FormulaPage>(await fetch(rescueApiBase + "/formulas?offset=0&limit=100", { signal }));
-  if (!Number.isInteger(first.total) || first.total < 0 || first.total > 10000 || !Array.isArray(first.formulas)) throw new Error("Daftar formula API tidak valid.");
+  if (!Number.isInteger(first.total) || first.total < 0 || first.total > 10000 || !Array.isArray(first.formulas)) throw new Error("Invalid formula catalog response.");
   const offsets = [];
   for (let offset = 100; offset < first.total; offset += 100) offsets.push(offset);
   const pages = await Promise.all(offsets.map(async offset => read<FormulaPage>(await fetch(rescueApiBase + "/formulas?offset=" + offset + "&limit=100", { signal }))));
@@ -32,6 +33,6 @@ export async function reformulate(formulaId: number, ingredient: string, signal?
     method: "POST", headers: { "Content-Type": "application/json" }, signal,
     body: JSON.stringify({ formula_id: formulaId, constraint: { type: "ingredient_unavailable", ingredient }, top_k: 8 }),
   }));
-  if (!Array.isArray(result.candidates) || !result.original_formula || !result.constraint) throw new Error("Hasil rescue API tidak valid.");
+  if (!Array.isArray(result.candidates) || !result.original_formula || !result.constraint) throw new Error("Invalid rescue search response.");
   return result;
 }
