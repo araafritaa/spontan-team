@@ -1,0 +1,34 @@
+{
+  "training_environment": "local CPU; not Cloudeka evidence",
+  "data_sha256": "1e9ccb591db052b0688f9102b99bbd7e4b4208f93e28aed72180a284b39c3eb3",
+  "selected_by": "mean development-CV R2 over four targets; not holdout",
+  "selected_candidate": "Polynomial2_Ridge",
+  "train_rows": 122,
+  "holdout_rows": 31,
+  "features": [
+    "phytantriol_pct",
+    "soy_lecithin_pct",
+    "cct_pct"
+  ],
+  "targets": [
+    "hydration_ratio",
+    "stickiness_score_0_10",
+    "oiliness_score_0_10",
+    "consistency_index"
+  ],
+  "parameters": {
+    "Dummy_mean": "DummyRegressor()",
+    "Ridge_linear": "Pipeline(steps=[('standardscaler', StandardScaler()), ('ridge', Ridge())])",
+    "Polynomial2_Ridge": "Pipeline(steps=[('polynomialfeatures', PolynomialFeatures(include_bias=False)),\n                ('standardscaler', StandardScaler()),\n                ('ridge', Ridge(alpha=1e-06))])",
+    "RandomForest": "RandomForestRegressor(min_samples_leaf=3, n_estimators=500, n_jobs=2,\n                      random_state=42)"
+  },
+  "versions": {
+    "python": "3.12.7",
+    "scikit_learn": "1.8.0",
+    "pandas": "3.0.2",
+    "numpy": "2.4.4"
+  },
+  "noise_added": false,
+  "saved_deployment_model": false,
+  "disclaimer": "Predicted / estimated and requires physical laboratory validation."
+}

@@ -1,0 +1,61 @@
+// Only fixed FormulaRescue operations are forwarded. Never accept a target URL from users.
+const upstreamBase = (process.env.FORMULARESCUE_API_URL ?? "https://formula-rescue-api-gold.vercel.app").replace(/\/$/, "");
+type Context = { params: Promise<{ action: string }> };
+export const runtime = "nodejs";
+
+async function forward(path: string, method: string, body?: string) {
+  try {
+    const base = new URL(upstreamBase);
+    if (base.protocol !== "https:" && !(base.protocol === "http:" && ["localhost", "127.0.0.1"].includes(base.hostname))) {
+      return Response.json({ detail: "Konfigurasi backend tidak valid." }, { status: 503 });
+    }
+    const response = await fetch(upstreamBase + path, {
+      method, body, headers: body ? { "Content-Type": "application/json" } : undefined,
+      cache: "no-store", redirect: "error", signal: AbortSignal.timeout(45000),
+    });
+    const result = await response.json().catch(() => null);
+    if (!response.ok) {
+      const status = [422, 429, 503].includes(response.status) ? response.status : 502;
+      return Response.json({ detail: status === 422 ? "Formula atau bahan tidak valid. Periksa pilihan input." : status === 429 ? "Terlalu banyak request. Coba kembali nanti." : "Backend rescue belum dapat memproses request." }, { status });
+    }
+    if (!result) return Response.json({ detail: "Respons backend tidak valid." }, { status: 502 });
+    return Response.json(result, { headers: { "Cache-Control": "no-store" } });
+  } catch {
+    return Response.json({ detail: "Backend tidak dapat dihubungi atau waktu proses habis. Coba kembali." }, { status: 503 });
+  }
+}
+export async function GET(request: Request, context: Context) {
+  const { action } = await context.params;
+  if (action === "health") return forward("/health", "GET");
+  if (action !== "formulas") return Response.json({ detail: "Endpoint tidak tersedia." }, { status: 404 });
+  const query = new URL(request.url).searchParams;
+  const offset = Number(query.get("offset") ?? 0), limit = Number(query.get("limit") ?? 100);
+  if (!Number.isInteger(offset) || offset < 0 || offset > 10000 || !Number.isInteger(limit) || limit < 1 || limit > 100) {
+    return Response.json({ detail: "Pagination tidak valid." }, { status: 422 });
+  }
+  return forward("/formulas?offset=" + offset + "&limit=" + limit, "GET");
+}
+export async function POST(request: Request, context: Context) {
+  const { action } = await context.params;
+  if (action !== "reformulate") return Response.json({ detail: "Endpoint tidak tersedia." }, { status: 404 });
+  if (!request.headers.get("content-type")?.startsWith("application/json")) return Response.json({ detail: "Gunakan JSON." }, { status: 415 });
+  const reader = request.body?.getReader();
+  if (!reader) return Response.json({ detail: "Input wajib diisi." }, { status: 422 });
+  let text = "", bytes = 0; const decoder = new TextDecoder();
+  try {
+    while (true) {
+      const { done, value } = await reader.read(); if (done) break;
+      bytes += value.byteLength;
+      if (bytes > 8192) { await reader.cancel(); return Response.json({ detail: "Input terlalu besar." }, { status: 413 }); }
+      text += decoder.decode(value, { stream: true });
+    }
+    text += decoder.decode();
+    const data = JSON.parse(text);
+    if (!Number.isInteger(data.formula_id) || data.formula_id < 0 || data.constraint?.type !== "ingredient_unavailable" ||
+      typeof data.constraint.ingredient !== "string" || !data.constraint.ingredient.trim() || data.constraint.ingredient.length > 200 ||
+      !Number.isInteger(data.top_k) || data.top_k < 1 || data.top_k > 10) {
+      return Response.json({ detail: "Formula, bahan, atau jumlah kandidat tidak valid." }, { status: 422 });
+    }
+    return forward("/reformulate", "POST", JSON.stringify({ formula_id: data.formula_id, constraint: { type: "ingredient_unavailable", ingredient: data.constraint.ingredient }, top_k: data.top_k }));
+  } catch { return Response.json({ detail: "Input JSON tidak valid." }, { status: 422 }); }
+}

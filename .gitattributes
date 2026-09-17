@@ -1,0 +1,7 @@
+# Preserve artifact/catalog bytes, including checksum-sensitive JSON and CSV.
+* text=auto
+*.json -text
+*.csv -text
+*.joblib binary
+# Markdown two-space line endings are intentional hard line breaks.
+*.md whitespace=cr-at-eol,-blank-at-eol

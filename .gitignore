@@ -1,0 +1,48 @@
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.pem
+*.key
+
+# Python and notebooks
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Node / hosting builds
+node_modules/
+.next/
+out/
+dist/
+.vercel/
+*.tsbuildinfo
+
+# Private or large inputs; explicitly review model artifacts before committing
+data/raw/
+data/private/
+*.log
+tmp/
+temp/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Local source exports and presentation assets; not needed for serving.
+/Phase2_500_Prototype_Training_Dataset.xlsx
+/spontan_engine.zip
+/spontan_engine/
+/SPONTAN_SYSTEM_FLOW_POSTER_*.png
+
+# Preserve the embedded legacy repo locally. Only the explicitly selected
+# serving modules, catalog and model artifacts are added to the parent repo.
+/Hackathon/

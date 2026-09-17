@@ -1,0 +1,18 @@
+{
+  "model_version": "mercurio_polynomial_ridge_v1",
+  "input": {
+    "phytantriol_pct": 1.5,
+    "soy_lecithin_pct": 2.5,
+    "cct_pct": 3.0
+  },
+  "expected_output": {
+    "hydration_ratio": 1.5623600002295417,
+    "stickiness_score_0_10": 3.2166667222342733,
+    "oiliness_score_0_10": 2.6574122962540816,
+    "consistency_index": 28816.466649685575
+  },
+  "rtol": 1e-10,
+  "atol": 1e-08,
+  "physical_measurement": false,
+  "disclaimer": "Predicted / estimated and requires physical laboratory validation."
+}

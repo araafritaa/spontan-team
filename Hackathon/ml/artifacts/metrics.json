@@ -1,0 +1,150 @@
+{
+  "evaluation_method": {
+    "holdout": "stratified 80/20 split",
+    "cross_validation": "5-fold stratified cross-validation",
+    "random_state": 42,
+    "decision_threshold": 0.5
+  },
+  "holdout": {
+    "training_rows": 649,
+    "test_rows": 163,
+    "test_stable_rows": 59,
+    "test_unstable_rows": 104,
+    "roc_auc": 0.8412646675358539,
+    "average_precision": 0.7702147108355759,
+    "log_loss": 0.47050019500667495,
+    "accuracy": 0.8098159509202454,
+    "balanced_accuracy": 0.7812907431551499,
+    "precision": 0.7692307692307693,
+    "recall": 0.6779661016949152,
+    "f1": 0.7207207207207207,
+    "confusion_matrix": {
+      "true_negative": 92,
+      "false_positive": 12,
+      "false_negative": 19,
+      "true_positive": 40
+    }
+  },
+  "cross_validation": {
+    "folds": 5,
+    "roc_auc": {
+      "mean": 0.8310953942529753,
+      "std": 0.03433549489395809,
+      "scores": [
+        0.8254563233376793,
+        0.8642438070404173,
+        0.7672413793103449,
+        0.8528879381273654,
+        0.8456475234490702
+      ]
+    },
+    "average_precision": {
+      "mean": 0.7439550824635843,
+      "std": 0.07119133454715407,
+      "scores": [
+        0.7392522463079018,
+        0.8299941877417559,
+        0.6193784048405149,
+        0.7926120320505258,
+        0.7385385413772232
+      ]
+    },
+    "f1": {
+      "mean": 0.672009297814754,
+      "std": 0.06077300378510162,
+      "scores": [
+        0.6260869565217392,
+        0.7058823529411765,
+        0.6019417475728155,
+        0.7719298245614035,
+        0.6542056074766355
+      ]
+    },
+    "balanced_accuracy": {
+      "mean": 0.7462489999035368,
+      "std": 0.04381584477087033,
+      "scores": [
+        0.7089308996088657,
+        0.769393741851369,
+        0.6999336870026525,
+        0.8194832976797762,
+        0.7335033733750205
+      ]
+    }
+  },
+  "feature_importance": [
+    {
+      "feature": "dehyquart_cc6_pct",
+      "importance": 0.11948743462562561
+    },
+    {
+      "feature": "plantapon_amino_kg_l_pct",
+      "importance": 0.08349554985761642
+    },
+    {
+      "feature": "arlypon_tt_pct",
+      "importance": 0.08171898126602173
+    },
+    {
+      "feature": "arlypon_f_pct",
+      "importance": 0.05981532484292984
+    },
+    {
+      "feature": "plantacare_2000_pct",
+      "importance": 0.058103304356336594
+    },
+    {
+      "feature": "luviquat_excellence_pct",
+      "importance": 0.05749666318297386
+    },
+    {
+      "feature": "dehyton_ab_30_pct",
+      "importance": 0.05586570128798485
+    },
+    {
+      "feature": "dehyton_mc_pct",
+      "importance": 0.05465109273791313
+    },
+    {
+      "feature": "plantapon_acg_50_pct",
+      "importance": 0.05436846986413002
+    },
+    {
+      "feature": "dehyton_ml_pct",
+      "importance": 0.053006600588560104
+    },
+    {
+      "feature": "plantacare_818_pct",
+      "importance": 0.04778890684247017
+    },
+    {
+      "feature": "dehyquart_cc7_benz_pct",
+      "importance": 0.04538087919354439
+    },
+    {
+      "feature": "plantapon_lc_7_pct",
+      "importance": 0.04454812407493591
+    },
+    {
+      "feature": "dehyquart_a_ca_pct",
+      "importance": 0.04201195389032364
+    },
+    {
+      "feature": "plantapon_amino_scg_l_pct",
+      "importance": 0.040110621601343155
+    },
+    {
+      "feature": "salcare_super_7_pct",
+      "importance": 0.039733026176691055
+    },
+    {
+      "feature": "dehyton_pk_45_pct",
+      "importance": 0.03223218768835068
+    },
+    {
+      "feature": "texapon_sb_3_kc_pct",
+      "importance": 0.030185196548700333
+    }
+  ],
+  "disclaimer": "Predicted / estimated and requires physical laboratory validation."
+}

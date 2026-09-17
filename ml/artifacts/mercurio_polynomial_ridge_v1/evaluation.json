@@ -1,0 +1,111 @@
+{
+  "evaluation_rows": {
+    "train": 122,
+    "holdout": 31
+  },
+  "evaluation_model": "Fitted on development rows only; never the full-data artifact",
+  "holdout": {
+    "hydration_ratio": {
+      "mae": 1.5078226982402319e-09,
+      "rmse": 1.8118381229609182e-09,
+      "r2": 0.9999999999999984
+    },
+    "stickiness_score_0_10": {
+      "mae": 6.2992667104028e-08,
+      "rmse": 7.704052257718145e-08,
+      "r2": 0.999999999999978
+    },
+    "oiliness_score_0_10": {
+      "mae": 9.126124269907071e-08,
+      "rmse": 1.1079912187026289e-07,
+      "r2": 0.9999999999999479
+    },
+    "consistency_index": {
+      "mae": 4.7901579584445684e-05,
+      "rmse": 5.576415074091041e-05,
+      "r2": 0.9999999999999981
+    }
+  },
+  "dummy_holdout": {
+    "hydration_ratio": {
+      "mae": 0.041445989891535195,
+      "rmse": 0.04884089580083224,
+      "r2": -0.12586611281917848
+    },
+    "stickiness_score_0_10": {
+      "mae": 0.44456186948677595,
+      "rmse": 0.5480355297330531,
+      "r2": -0.11095998832004184
+    },
+    "oiliness_score_0_10": {
+      "mae": 0.42699249525338323,
+      "rmse": 0.5201401241029235,
+      "r2": -0.1470740977656686
+    },
+    "consistency_index": {
+      "mae": 1164.2835795722938,
+      "rmse": 1421.13921007066,
+      "r2": -0.23043112949289268
+    }
+  },
+  "development_cv": {
+    "hydration_ratio": {
+      "mae": {
+        "mean": 2.305974400022374e-09,
+        "std": 4.064304158093869e-10
+      },
+      "rmse": {
+        "mean": 2.8795530318890614e-09,
+        "std": 5.696591947589654e-10
+      },
+      "r2": {
+        "mean": 0.9999999999999971,
+        "std": 8.513318722283364e-16
+      }
+    },
+    "stickiness_score_0_10": {
+      "mae": {
+        "mean": 1.0170797334703903e-07,
+        "std": 2.1338968135513578e-08
+      },
+      "rmse": {
+        "mean": 1.2301146447838465e-07,
+        "std": 2.5440306960927135e-08
+      },
+      "r2": {
+        "mean": 0.9999999999999591,
+        "std": 1.385360829059656e-14
+      }
+    },
+    "oiliness_score_0_10": {
+      "mae": {
+        "mean": 1.3629327103692467e-07,
+        "std": 2.879720789656494e-08
+      },
+      "rmse": {
+        "mean": 1.660375070606438e-07,
+        "std": 3.4216381869512843e-08
+      },
+      "r2": {
+        "mean": 0.9999999999999126,
+        "std": 2.041047729196701e-14
+      }
+    },
+    "consistency_index": {
+      "mae": {
+        "mean": 6.168941582412421e-05,
+        "std": 1.2363737477829469e-05
+      },
+      "rmse": {
+        "mean": 8.498228086996991e-05,
+        "std": 1.8752689309452073e-05
+      },
+      "r2": {
+        "mean": 0.9999999999999961,
+        "std": 1.9068706655153885e-15
+      }
+    }
+  },
+  "holdout_status": "Previously inspected in model benchmark; reused without tuning, not a fresh independent confirmation",
+  "interpretation": "Approximation of generated published-equation responses; NOT independent laboratory validation"
+}

@@ -1,0 +1,77 @@
+{
+  "model_version": "mercurio_polynomial_ridge_v1",
+  "model_type": "PolynomialFeatures + StandardScaler + Ridge (multi-output regression)",
+  "created_at_utc": "2026-09-17T13:01:29.641166+00:00",
+  "environment_declared": "local_cpu",
+  "cloudeka_training_evidence": "Not collected by this script; local run is not Cloudeka evidence",
+  "feature_order": [
+    "phytantriol_pct",
+    "soy_lecithin_pct",
+    "cct_pct"
+  ],
+  "target_order": [
+    "hydration_ratio",
+    "stickiness_score_0_10",
+    "oiliness_score_0_10",
+    "consistency_index"
+  ],
+  "feature_ranges_pct": {
+    "phytantriol_pct": [
+      0,
+      3
+    ],
+    "soy_lecithin_pct": [
+      0,
+      3
+    ],
+    "cct_pct": [
+      0,
+      5
+    ]
+  },
+  "target_units": {
+    "hydration_ratio": "ratio",
+    "stickiness_score_0_10": "score 0-10",
+    "oiliness_score_0_10": "score 0-10",
+    "consistency_index": "source-defined; physical unit unverified"
+  },
+  "degree": 2,
+  "include_bias": false,
+  "ridge_alpha": 1e-06,
+  "fit_intercept": true,
+  "polynomial_terms": [
+    "phytantriol_pct",
+    "soy_lecithin_pct",
+    "cct_pct",
+    "phytantriol_pct^2",
+    "phytantriol_pct soy_lecithin_pct",
+    "phytantriol_pct cct_pct",
+    "soy_lecithin_pct^2",
+    "soy_lecithin_pct cct_pct",
+    "cct_pct^2"
+  ],
+  "seed_for_split": 42,
+  "final_training_rows": 153,
+  "evaluation_training_rows": 122,
+  "holdout_rows": 31,
+  "study_id": "MERCURIO_2020_P2",
+  "data_origin": "MODEL_GENERATED_PUBLISHED_EQUATION",
+  "noise_added": false,
+  "workbook_sha256": "635c0345e4540cbd74d2cac82319f53aee214453c2b9ccf630d0ba33a659b960",
+  "model_sha256": "8e2741b4c5044b9dfba9575a307adc96ad3168dc7a91772de85e324fa79a8463",
+  "model_bytes": 1465,
+  "full_data_fit_seconds": 0.019371499998669606,
+  "mean_single_prediction_ms_100_calls": 2.234844999984489,
+  "versions": {
+    "python": "3.12.7",
+    "scikit_learn": "1.8.0",
+    "numpy": "2.4.4",
+    "pandas": "3.0.2",
+    "scipy": "1.17.1",
+    "joblib": "1.5.3"
+  },
+  "missing_value_policy": "Reject missing/nonfinite input; no imputation",
+  "input_policy": "Exact three features, numeric nonboolean, finite, inside design range",
+  "output_policy": "Reject nonfinite/negative responses and sensory scores outside 0-10; never silently clip",
+  "disclaimer": "Predicted / estimated and requires physical laboratory validation."
+}

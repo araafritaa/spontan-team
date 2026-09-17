@@ -1,0 +1,20 @@
+feature_name,display_name,density,ingredient_type
+texapon_sb_3_kc_pct,Texapon SB 3 KC,1.128,surfactant
+plantapon_acg_50_pct,Plantapon ACG 50,1.147,surfactant
+plantapon_lc_7_pct,Plantapon LC 7,1.07,surfactant
+plantacare_818_pct,Plantacare 818,1.104,surfactant
+plantacare_2000_pct,Plantacare 2000,1.103,surfactant
+dehyton_mc_pct,Dehyton MC,1.097,surfactant
+dehyton_pk_45_pct,Dehyton PK 45,1.062,surfactant
+dehyton_ml_pct,Dehyton ML,1.084,surfactant
+dehyton_ab_30_pct,Dehyton AB 30,1.031,surfactant
+plantapon_amino_scg_l_pct,Plantapon Amino SCG-L,1.051,surfactant
+plantapon_amino_kg_l_pct,Plantapon Amino KG-L,1.028,surfactant
+dehyquart_a_ca_pct,Dehyquart A-CA,0.955,surfactant
+luviquat_excellence_pct,Luviquat Excellence,1.118,polyelectrolyte
+dehyquart_cc6_pct,Dehyquart CC6,1.067,polyelectrolyte
+dehyquart_cc7_benz_pct,Dehyquart CC7 Benz,1.024,polyelectrolyte
+salcare_super_7_pct,Salcare Super 7,1.121,polyelectrolyte
+arlypon_f_pct,Arlypon F,0.887,thickener
+arlypon_tt_pct,Arlypon TT,0.97,thickener
+water_pct,Water,0.998,solvent

@@ -1,0 +1,66 @@
+{
+  "study_id": "MERCURIO_2020_P2",
+  "sheet": "Training_Master_500",
+  "workbook_sha256": "635c0345e4540cbd74d2cac82319f53aee214453c2b9ccf630d0ba33a659b960",
+  "workbook_rows": 500,
+  "selected_rows": 153,
+  "clean_rows": 153,
+  "excluded_rows": 0,
+  "unique_compositions": 153,
+  "repeated_composition_groups": 0,
+  "feature_order": [
+    "phytantriol_pct",
+    "soy_lecithin_pct",
+    "cct_pct"
+  ],
+  "target_order": [
+    "hydration_ratio",
+    "stickiness_score_0_10",
+    "oiliness_score_0_10",
+    "consistency_index"
+  ],
+  "feature_ranges_pct": {
+    "phytantriol_pct": [
+      0,
+      3
+    ],
+    "soy_lecithin_pct": [
+      0,
+      3
+    ],
+    "cct_pct": [
+      0,
+      5
+    ]
+  },
+  "data_origin_counts": {
+    "MODEL_GENERATED_PUBLISHED_EQUATION": 153
+  },
+  "empirical_ground_truth_counts": {
+    "False": 153
+  },
+  "validation_role_counts": {
+    "NOT_INDEPENDENT_VALIDATION": 153
+  },
+  "target_units": {
+    "hydration_ratio": "ratio",
+    "stickiness_score_0_10": "score 0-10",
+    "oiliness_score_0_10": "score 0-10",
+    "consistency_index": "source-defined consistency index; confirm physical unit against original paper"
+  },
+  "transformations": [
+    "study filter",
+    "numeric conversion",
+    "finite/domain/identity/unit validation",
+    "exact numeric deduplication",
+    "provenance retained"
+  ],
+  "noise_added": false,
+  "training_performed": false,
+  "split_created": false,
+  "versions": {
+    "pandas": "3.0.2",
+    "numpy": "2.4.4"
+  },
+  "disclaimer": "Predicted / estimated and requires physical laboratory validation."
+}
