@@ -1,8 +1,8 @@
 # API Contract — Agree Before Parallel Coding
 
-Status: unified local backend implemented, version 0.1.0. Deployment and new AI frontend wiring are not completed. Team owner/reviewer: TBD.
+Status: unified backend and AI frontend wiring implemented locally, version 0.1.0. Vercel runtime deployment is not yet verified. Team owner/reviewer: TBD.
 
-## Unified backend — implemented contract (2026-09-17)
+## Unified backend — implemented contract (2026-09-18)
 
 Entrypoint: `backend.main:app`, run from repository root. Example local base URL:
 `http://127.0.0.1:8001`. This local address is not an internet deployment.
@@ -13,27 +13,31 @@ Entrypoint: `backend.main:app`, run from repository root. Example local base URL
 | `GET /ready` | Actual artifact inference on initial load; per-engine readiness/version; 503 if either unavailable |
 | `GET /formulas` | Existing stable shampoo catalog, pagination and additional `catalog_version` |
 | `POST /reformulate` | Existing rescue request/response plus `model_version` and `catalog_version` |
-| `POST /ai-reformulation/predict` | `composition` with exactly the three study factors; four predicted responses, version, provenance, disclaimer |
+| `GET /ai-reformulation/products` | Versioned catalog: brand, product, category, three synthetic factors with ranges/baseline |
+| `POST /ai-reformulation/predict` | Required `product_id` and exactly three factor percentages; selected product, four predictions, version, provenance, disclaimer |
 | `POST /ai-reformulation/optimize` | Baseline, numerical targets and optional locks/bounds; at most three predicted-feasible alternatives |
 
-AI composition fields: `phytantriol_pct` 0–3%, `soy_lecithin_pct` 0–3%,
-`cct_pct` 0–5%. Values must be finite JSON numbers, not strings or booleans.
-These are factors in the Mercurio emulsion study, not a complete 100% formula.
+AI composition fields: `factor_a_pct`, `factor_b_pct`, `factor_c_pct`.
+Their labels, ranges and synthetic baselines come from the selected catalog profile.
+Values must be finite JSON numbers, not strings or booleans. Unknown products are rejected.
+Category is derived server-side from `product_id`, not accepted as a client override.
+These are illustrative formulation roles, not a complete 100% formula or manufacturer recipe.
 
 Prediction fixture:
 
 ```json
-{"composition":{"phytantriol_pct":1.5,"soy_lecithin_pct":2.5,"cct_pct":3.0}}
+{"product_id":"wardah-lightening-day-cream","composition":{"factor_a_pct":4.0,"factor_b_pct":8.0,"factor_c_pct":2.2}}
 ```
 
 Optimizer fixture:
 
 ```json
 {
-  "baseline":{"phytantriol_pct":1.5,"soy_lecithin_pct":2.5,"cct_pct":3.0},
-  "target_constraints":{"hydration_ratio_min":1.55,"stickiness_score_0_10_max":3.5},
-  "bounds":{"soy_lecithin_pct":{"min":2.0,"max":3.0}},
-  "fixed":["cct_pct"],
+  "product_id":"wardah-lightening-day-cream",
+  "baseline":{"factor_a_pct":4.0,"factor_b_pct":8.0,"factor_c_pct":2.2},
+  "target_constraints":{"hydration_ratio_min":1.25,"stickiness_score_0_10_max":4.5},
+  "bounds":{"factor_b_pct":{"min":6.0,"max":15.0}},
+  "fixed":["factor_c_pct"],
   "top_k":3,
   "seed":42,
   "min_distance":0.03
@@ -47,13 +51,13 @@ nonnegative, finite, at most 1,000,000; sensory score thresholds are at most 10.
 Contradictory min/max is rejected. Impossible but structurally valid targets
 are allowed and can produce an empty search.
 
-`bounds` must be inside study ranges and contain the baseline value. `fixed`
+`bounds` must be inside the selected synthetic product profile ranges and contain the baseline value. `fixed`
 contains unique supported factor names. A fixed factor stays at its baseline;
 equal min/max bounds also lock a factor. `top_k`: integer 1–3; `seed`: integer
 0–4,294,967,295; `min_distance`: finite number 0–0.5. Unknown fields are rejected.
 
 Optimizer response fields: `mode`, `status`, `model_version`, `data_origin`,
-`baseline`, `target_constraints`, `fixed`, `effective_bounds`, `process`,
+`product`, `baseline`, `target_constraints`, `fixed`, `effective_bounds`, `process`,
 `candidates`, `limitations`, `disclaimer`. Each candidate includes a deterministic
 `candidate_id`, `rank`, `composition`, `predicted_responses`, composition/response
 deltas, `normalized_change_distance`, target checks and `PREDICTED_FEASIBLE` status.
@@ -76,13 +80,18 @@ a distributed or per-user rate limit. No authentication or request deadline midd
 Production rate limiting/timeouts must be reviewed separately.
 
 Every AI result includes: `Predicted / estimated and requires physical laboratory validation.`
-The sensory data provenance remains `MODEL_GENERATED_PUBLISHED_EQUATION`.
+The current sensory data provenance is `SYNTHETIC_PROTOTYPE_DATA`; model metrics describe held-out synthetic interpolation, not laboratory accuracy. The previous Mercurio artifact remains preserved but is not the current API model.
 CORS uses exact comma-separated `CORS_ORIGINS`; defaults allow localhost:3000 and
 127.0.0.1:3000. No wildcard credentials. CORS is not authentication.
 
-Frontend checkpoint: existing Formula Rescue proxy can point to this backend via
-server-side `FORMULARESCUE_API_URL`. It still defaults to the old public API.
-AI Reformulation wizard is **not connected** to these endpoints in this backend stage.
+Frontend checkpoint: Formula Rescue and AI Reformulation use same-origin Next.js
+Route Handlers. In Services, both use the runtime `SPONTAN_BACKEND_URL` binding.
+The AI proxy only permits GET `products` and POST `predict` / `optimize`, validates JSON/media/body size,
+does not forward browser cookies and fails closed without unified-backend config.
+The frontend displays real baseline/Top 3/empty search/process/evidence and never
+substitutes fabricated predictions. Successful responses are retained only in
+browser memory for the dashboard/library. Lab feedback can be downloaded as JSON;
+neither sessions nor lab results are persisted by the backend.
 No current public deployment was changed.
 
 The generic template below is retained for future team decisions; its TBD fields
@@ -95,9 +104,11 @@ Formula Rescue memakai kontrak existing dari Hackathon/backend/schemas.py.
 
 - Browser: GET /api/formula-rescue/formulas?offset=0&limit=100.
 - Browser: POST /api/formula-rescue/reformulate.
-- Next.js meneruskan ke GET /formulas dan POST /reformulate di API lama.
+- Next.js meneruskan ke GET /formulas dan POST /reformulate pada backend yang
+  dipilih server-side; binding Services memprioritaskan unified backend.
 - GET /api/formula-rescue/health hanya memeriksa HTTP, bukan readiness model.
-- Upstream server env: FORMULARESCUE_API_URL; default backend Vercel lama.
+- Upstream Services: binding runtime `SPONTAN_BACKEND_URL`; override lokal/legacy:
+  `FORMULARESCUE_API_URL`. Fallback Rescue-only lama hanya untuk non-Vercel.
 - Request: formula_id integer, constraint.type = ingredient_unavailable,
   constraint.ingredient string 1–200 karakter, top_k integer 1–10 (UI meminta 8).
 - Fixture: formula_id 7, ingredient Plantacare 818 -> Top 3: 288, 292, 190.

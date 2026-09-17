@@ -8,7 +8,9 @@ Inherit root AGENTS.md. Read PROJECT_SPEC.md and docs/API_CONTRACT.md before cha
 - Work from agreed typed fixtures while backend is built; clearly label mock data. Never fabricate successful inference or process completion.
 - Backend owns prediction/preprocessing/business rules; frontend handles input and rendering.
 - Show idle, loading, success, validation error, server/network error, and empty states. Do not hide failures by falling back to mock predictions.
-- API base uses NEXT_PUBLIC_API_BASE_URL with HTTPS in deployment. Never place secrets/tokens/private credentials in NEXT_PUBLIC_ variables.
+- Browser API calls use same-origin Route Handlers. In Vercel Services, only
+  server code reads the generated `SPONTAN_BACKEND_URL` binding; local/legacy
+  override is `FORMULARESCUE_API_URL`. Never expose either through `NEXT_PUBLIC_`.
 - Explain uncertainty/score meaning from the contract. Do not label ranking score as calibrated confidence.
 - Render user/model content safely; do not use raw HTML injection for untrusted output.
 - Use accessible labels, keyboard controls, legible responsive layouts; test mobile. Disable repeat submissions while a request is pending; this is not server rate limiting.

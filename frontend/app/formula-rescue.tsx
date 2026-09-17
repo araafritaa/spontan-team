@@ -1,20 +1,48 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getAllFormulas, reformulate, type FormulaSummary, type ReformulateResponse, type RescueCandidate } from "../lib/rescue-api";
+import type { NewSessionAnalysis } from "../lib/session-analysis";
 const percent = (value: number) => (value * 100).toFixed(1) + "%";
 type State = "idle" | "running" | "complete" | "error";
-function Candidate({ candidate }: { candidate: RescueCandidate }) {
+function LabValidation({ candidate, insight }: { candidate: RescueCandidate; insight: string }) {
+  const [experimentId, setExperimentId] = useState("");
+  const [outcome, setOutcome] = useState("pending");
+  const [measuredStability, setMeasuredStability] = useState("");
+  const [method, setMethod] = useState("");
+  const [notes, setNotes] = useState("");
+  const [message, setMessage] = useState("");
+  function downloadFeedback() {
+    if (!experimentId.trim() || outcome === "pending" || !method.trim()) { setMessage("Isi experiment ID, result, dan test method terlebih dahulu."); return; }
+    const numeric = measuredStability === "" ? null : Number(measuredStability);
+    if (numeric !== null && (!Number.isFinite(numeric) || numeric < 0 || numeric > 1)) { setMessage("Measured stability harus berada pada rentang 0–1."); return; }
+    const record = { record_kind: "formula_rescue_lab_feedback", candidate_id: candidate.formula_id, candidate_rank: candidate.rank, insight_context: insight, outcome, measured_stability_0_1: numeric, experiment_id: experimentId.trim(), test_method: method.trim(), notes: notes.trim(), captured_at_utc: new Date().toISOString(), ingestion_status: "NOT_UPLOADED", disclaimer: "Predicted / estimated and requires physical laboratory validation." };
+    const url = URL.createObjectURL(new Blob([JSON.stringify(record, null, 2)], { type: "application/json" }));
+    const anchor = document.createElement("a"); anchor.href = url; anchor.download = `rescue-lab-feedback-formula-${candidate.formula_id}.json`; document.body.appendChild(anchor); anchor.click(); anchor.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+    setMessage("Feedback JSON downloaded. Belum dikirim ke backend atau dipakai retraining.");
+  }
+  const fieldId = (name: string) => `lab-${name}-${candidate.formula_id}`;
+  return <details className="lab-validation"><summary>Enter Lab Validation Result</summary><div className="lab-grid">
+    <label htmlFor={fieldId("experiment")}>Experiment ID<input id={fieldId("experiment")} value={experimentId} maxLength={80} onChange={event => { setExperimentId(event.target.value); setMessage(""); }} /></label>
+    <label htmlFor={fieldId("outcome")}>Validation result<select id={fieldId("outcome")} value={outcome} onChange={event => { setOutcome(event.target.value); setMessage(""); }}><option value="pending">Select result</option><option value="pass">Pass</option><option value="fail">Fail</option></select></label>
+    <label htmlFor={fieldId("stability")}>Measured stability (0–1, optional)<input id={fieldId("stability")} type="number" min="0" max="1" step="any" value={measuredStability} onChange={event => { setMeasuredStability(event.target.value); setMessage(""); }} /></label>
+    <label htmlFor={fieldId("method")}>Test method / instrument<input id={fieldId("method")} value={method} maxLength={200} onChange={event => { setMethod(event.target.value); setMessage(""); }} /></label>
+    <label className="lab-notes" htmlFor={fieldId("notes")}>Lab notes<textarea id={fieldId("notes")} rows={3} maxLength={2000} value={notes} onChange={event => setNotes(event.target.value)} /></label>
+  </div><button type="button" className="secondary" onClick={downloadFeedback}>Download validation feedback</button><p className="small-note" role="status">{message || "The browser does not upload or retrain from this result automatically."}</p></details>;
+}
+function Candidate({ candidate, insight }: { candidate: RescueCandidate; insight: string }) {
   return <article className="rescue-candidate">
     <div className="rescue-card-head"><h3><span className="rank-number">#{candidate.rank}</span> Formula {candidate.formula_id}</h3><span className="badge">{candidate.constraint_passed ? "CONSTRAINT PASS" : "CONSTRAINT FAIL"}</span></div>
     <div className="rescue-metrics"><div><span>Estimated stability</span><strong>{percent(candidate.predicted_stability)}</strong></div><div><span>Composition similarity</span><strong>{percent(candidate.formula_similarity)}</strong></div><div><span>Ingredients changed</span><strong>{candidate.number_of_changes}</strong></div></div>
     <p className="rescue-score">Rescue score: <strong>{candidate.rescue_score.toFixed(3)}</strong> · ranking score, bukan probabilitas keberhasilan lab.</p>
     <div className="trace-table-wrap"><table className="rescue-table"><caption>Perubahan komposisi · persen konsentrasi</caption><thead><tr><th scope="col">Ingredient</th><th scope="col">Original</th><th scope="col">Candidate</th></tr></thead><tbody>{candidate.changed_ingredients.map(change => <tr key={change.feature_name}><th scope="row">{change.display_name}</th><td>{change.original_pct.toFixed(2)}%</td><td>{change.candidate_pct.toFixed(2)}%</td></tr>)}</tbody></table></div>
+    <LabValidation candidate={candidate} insight={insight} />
   </article>;
 }
-export default function FormulaRescue() {
+export default function FormulaRescue({ onAnalysis }: { onAnalysis?: (entry: NewSessionAnalysis) => void }) {
   const [formulas, setFormulas] = useState<FormulaSummary[]>([]);
   const [formulaId, setFormulaId] = useState<number | null>(null);
   const [ingredient, setIngredient] = useState("");
+  const [insight, setInsight] = useState("");
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
   const [runError, setRunError] = useState("");
@@ -44,7 +72,10 @@ export default function FormulaRescue() {
     setResult(null); setRunError(""); setState("running");
     try {
       const response = await reformulate(formula.formula_id, ingredient, controller.signal);
-      if (!controller.signal.aborted) { setResult(response); setState("complete"); }
+      if (!controller.signal.aborted) {
+        setResult(response); setState("complete");
+        onAnalysis?.({ kind: "rescue", title: `Formula ${formula.formula_id} rescue`, summary: response.candidates.length ? `${response.candidates.length} ranked candidates for replacing ${ingredient}.` : `No candidate found for replacing ${ingredient}.`, status: response.candidates.length ? "Completed" : "No candidates", insight: insight.trim(), payload: { request: { formula_id: formula.formula_id, unavailable_ingredient: ingredient, insight_context: insight.trim() }, response } });
+      }
     } catch (error) {
       if (!controller.signal.aborted) { setRunError(error instanceof Error ? error.message : "Request gagal."); setState("error"); }
     } finally { if (activeRun.current === controller) activeRun.current = null; }
@@ -67,16 +98,18 @@ export default function FormulaRescue() {
         {!formula?.unavailable_ingredient_options.length && <option value="">Pilih formula dahulu</option>}
         {formula?.unavailable_ingredient_options.map(item => <option key={item.feature_name} value={item.display_name}>{item.display_name}</option>)}
       </select>
+      <label htmlFor="rescue-insight">Insight / Rescue Goal</label><textarea id="rescue-insight" rows={4} maxLength={2000} value={insight} disabled={state === "running"} onChange={event => { setInsight(event.target.value); reset(); }} placeholder="Example: replace the unavailable ingredient while maintaining mild cleansing and viscosity." />
+      <p className="small-note">Context for the R&amp;D record only. The current rescue model does not convert this text into ranking features.</p>
       <button className="primary" disabled={loading || state === "running" || !formula || !ingredient} onClick={() => void run()}>{state === "running" ? "Memproses…" : "Run Formula Rescue"} →</button>
       {loadError && <div role="alert" className="rescue-error"><p>{loadError}</p><button className="back" onClick={() => setRetry(retry + 1)}>Retry daftar formula</button></div>}
       {!loading && !loadError && !formulas.length && <p>Tidak ada formula stable yang dapat dipilih.</p>}
       {formula && <><h3>Original composition <span className="badge">OBSERVED STABLE</span></h3><p>Formula {formula.formula_id}</p><div className="trace-table-wrap"><table className="rescue-table"><thead><tr><th scope="col">Ingredient</th><th scope="col">%</th></tr></thead><tbody>{formula.ingredients.map(item => <tr key={item.feature_name}><th scope="row">{item.display_name}</th><td>{item.concentration_pct.toFixed(2)}</td></tr>)}</tbody></table></div></>}
-    </section><div className="rescue-results"><section className="rescue-process" aria-live="polite"><p className="eyebrow">RESCUE PROCESS TRACE</p><h2>{state === "running" ? "Backend sedang memproses…" : state === "complete" ? "Hasil API diterima" : state === "error" ? "Request belum berhasil" : "Siap menjalankan rescue"}</h2><div className="rescue-step-grid">{steps.map(([title, detail], index) => <div key={title}><span>0{index + 1}</span><h3>{title}</h3><p>{detail}</p></div>)}</div><p className="trace-note">Bukan progress per langkah secara real-time. Ringkasan diperbarui setelah respons backend diterima.</p></section>
+    </section><div className="rescue-results"><section className="rescue-process" aria-live="polite"><p className="eyebrow">RESCUE PROCESS TRACE</p><h2>{state === "running" ? "Backend sedang memproses…" : state === "complete" ? "Hasil API diterima" : state === "error" ? "Request belum berhasil" : "Siap menjalankan rescue"}</h2><div className="rescue-step-grid">{steps.map(([title, detail]) => <div key={title}><h3>{title}</h3><p>{detail}</p></div>)}</div><p className="trace-note">Bukan progress per langkah secara real-time. Ringkasan diperbarui setelah respons backend diterima.</p></section>
       <div aria-live="polite" aria-busy={state === "running"}>
         {runError && <div className="rescue-error" role="alert"><p>{runError}</p><p>Periksa koneksi, lalu jalankan ulang. Tidak ada hasil mock pengganti.</p></div>}
-        {result ? result.candidates.length ? <><h2 className="rescue-results-title">Top 3 rescue candidates</h2><p>Removing {result.constraint.display_name} · {result.eligible_candidate_count} eligible candidates</p><div className="rescue-candidate-list">{result.candidates.slice(0,3).map(candidate => <Candidate key={candidate.formula_id} candidate={candidate}/>)}</div>
+        {result ? result.candidates.length ? <><h2 className="rescue-results-title">Top 3 rescue candidates</h2><p>Removing {result.constraint.display_name} · {result.eligible_candidate_count} eligible candidates</p><div className="rescue-candidate-list">{result.candidates.slice(0,3).map(candidate => <Candidate key={candidate.formula_id} candidate={candidate} insight={insight}/>)}</div>
           {result.candidates.length > 3 && <section className="rescue-pool"><h2>Kandidat berikutnya</h2><div className="trace-table-wrap"><table className="rescue-table"><thead><tr>{["Rank","Formula","Est. stability","Similarity","Changes","Score"].map(label => <th scope="col" key={label}>{label}</th>)}</tr></thead><tbody>{result.candidates.slice(3).map(c => <tr key={c.formula_id}><td>#{c.rank}</td><td>{c.formula_id}</td><td>{percent(c.predicted_stability)}</td><td>{percent(c.formula_similarity)}</td><td>{c.number_of_changes}</td><td>{c.rescue_score.toFixed(3)}</td></tr>)}</tbody></table></div></section>}
-          <p className="demo-note">Hasil API nyata, belum disimpan ke Dataset Library. Model tidak mengevaluasi sensory atau menjamin keberhasilan lab.</p>
+          <p className="notice-note">Hasil API dicatat hanya pada sesi browser ini. Model tidak mengevaluasi sensory atau menjamin keberhasilan lab.</p>
         </> : <div className="empty-state"><h2>Tidak ada kandidat yang memenuhi batas</h2><p>Coba formula atau bahan lain. Tidak ada rekomendasi yang dibuat-buat.</p></div>
         : state !== "error" && <div className="empty-state"><h2>{state === "running" ? "Evaluating candidate pool…" : "Pilih constraint, lalu jalankan rescue."}</h2><p>Top 3 dan peringkat berikutnya muncul setelah respons API berhasil.</p></div>}
       </div></div></div>

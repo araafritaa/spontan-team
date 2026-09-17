@@ -1,0 +1,51 @@
+{
+  "split": "80/20 stratified by product_id before fitting preprocessing",
+  "seed": 20260918,
+  "development_rows": 1689,
+  "holdout_rows": 423,
+  "holdout": {
+    "hydration_ratio": {
+      "mae": 0.0045339175024318844,
+      "rmse": 0.005666214047467459,
+      "r2": 0.9990561111536408
+    },
+    "stickiness_score_0_10": {
+      "mae": 0.020223815988898657,
+      "rmse": 0.02565018301328734,
+      "r2": 0.9988749980897846
+    },
+    "oiliness_score_0_10": {
+      "mae": 0.020665064871052314,
+      "rmse": 0.02566001218169604,
+      "r2": 0.9989276336628665
+    },
+    "consistency_index": {
+      "mae": 53.97348367086256,
+      "rmse": 67.71867892190735,
+      "r2": 0.9999033867055295
+    }
+  },
+  "dummy_holdout": {
+    "hydration_ratio": {
+      "mae": 0.1538950823333499,
+      "rmse": 0.18444551836603135,
+      "r2": -0.00016376363972003816
+    },
+    "stickiness_score_0_10": {
+      "mae": 0.6438151333506956,
+      "rmse": 0.7647483977150219,
+      "r2": -2.181736341611007e-05
+    },
+    "oiliness_score_0_10": {
+      "mae": 0.6681383689943547,
+      "rmse": 0.7837099894698109,
+      "r2": -0.0003229230253916082
+    },
+    "consistency_index": {
+      "mae": 5705.851142537331,
+      "rmse": 6891.147551201746,
+      "r2": -0.00046761532195183086
+    }
+  },
+  "interpretation": "Interpolation of disclosed synthetic equations; not laboratory or commercial-product accuracy."
+}

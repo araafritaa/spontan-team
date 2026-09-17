@@ -44,15 +44,19 @@ def main():
         rescue = call('/reformulate', {'formula_id': 7, 'constraint': {
             'type': 'ingredient_unavailable', 'ingredient': 'Plantacare 818'}, 'top_k': 3})
         assert [c['formula_id'] for c in rescue['candidates']] == [288, 292, 190]
-        baseline = {'phytantriol_pct': 1.5, 'soy_lecithin_pct': 2.5, 'cct_pct': 3.0}
-        prediction = call('/ai-reformulation/predict', {'composition': baseline})
-        assert abs(prediction['predicted_responses']['hydration_ratio']-1.56236) < 1e-7
-        optimized = call('/ai-reformulation/optimize', {'baseline': baseline,
-            'target_constraints': {'hydration_ratio_min': 1.55, 'stickiness_score_0_10_max': 3.5}})
+        products = call('/ai-reformulation/products')
+        assert len(products['products']) == 22
+        product = products['products'][0]
+        baseline = {factor['key']: factor['baseline'] for factor in product['factors']}
+        prediction = call('/ai-reformulation/predict', {'product_id': product['product_id'], 'composition': baseline})
+        assert prediction['data_origin'] == 'SYNTHETIC_PROTOTYPE_DATA'
+        assert prediction['product']['product_id'] == product['product_id']
+        optimized = call('/ai-reformulation/optimize', {'product_id': product['product_id'], 'baseline': baseline,
+            'target_constraints': {'hydration_ratio_min': 1.25, 'stickiness_score_0_10_max': 4.5}})
         assert len(optimized['candidates']) == 3
         assert all(all(c['constraint_checks'].values()) for c in optimized['candidates'])
         print(json.dumps({'status': 'PASS', 'transport': 'actual loopback HTTP',
-            'checked_endpoints': 6, 'formula_rescue_top3': [288, 292, 190],
+            'checked_endpoints': 7, 'formula_rescue_top3': [288, 292, 190],
             'sensory_prediction': prediction['predicted_responses'],
             'optimization_process': optimized['process']}, indent=2))
     finally:

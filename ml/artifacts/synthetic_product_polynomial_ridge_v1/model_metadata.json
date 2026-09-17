@@ -1,0 +1,44 @@
+{
+  "model_version": "synthetic_product_polynomial_ridge_v1",
+  "model_type": "product/category one-hot + degree-2 numeric polynomial + StandardScaler + multi-output Ridge",
+  "created_at_utc": "2026-09-17T18:04:05.066360+00:00",
+  "training_environment": "local_cpu",
+  "cloudeka_training_evidence": "Not collected; this artifact was trained locally.",
+  "model_input_order": [
+    "product_id",
+    "category_id",
+    "factor_a_ratio",
+    "factor_b_ratio",
+    "factor_c_ratio"
+  ],
+  "api_feature_order": [
+    "factor_a_pct",
+    "factor_b_pct",
+    "factor_c_pct"
+  ],
+  "target_order": [
+    "hydration_ratio",
+    "stickiness_score_0_10",
+    "oiliness_score_0_10",
+    "consistency_index"
+  ],
+  "data_origin": "SYNTHETIC_PROTOTYPE_DATA",
+  "dataset_rows": 2112,
+  "products": 22,
+  "categories": 11,
+  "rows_per_product": 96,
+  "seed": 20260918,
+  "ridge_alpha": 0.05,
+  "degree": 2,
+  "model_sha256": "9e237ae7584c7456ff9b1fe6ab95ff043722302298715c229a673ffdc5ef6356",
+  "catalog_sha256": "1afee09751a1366886cdf4e469c9b65080306a69c736a63404778506bf1ad4f4",
+  "versions": {
+    "python": "3.12.7",
+    "scikit_learn": "1.8.0",
+    "numpy": "2.4.4",
+    "pandas": "3.0.2",
+    "joblib": "1.5.3"
+  },
+  "input_policy": "Known product_id plus exactly three finite percentages within its synthetic profile ranges.",
+  "disclaimer": "Predicted / estimated and requires physical laboratory validation."
+}

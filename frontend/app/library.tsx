@@ -1,92 +1,46 @@
 "use client";
-import { useState } from "react";
 
-const tabs = ["Clear Insight", "Formula Rescue", "AI Reformulation"] as const;
-type Category = typeof tabs[number];
-type Metric = { name: string; baseline: number | null; candidate: number | null; unit: string; note: string };
-type Session = { id: string; category: Category; date: string; title: string; summary: string; input: Record<string, unknown>; metrics: Metric[] };
+import { useMemo, useState } from "react";
+import type { SessionAnalysis } from "../lib/session-analysis";
 
-const sessions: Session[] = tabs.flatMap((category, group) => [0, 1].map(index => ({
-  id: `DEMO-${group}-${index + 1}`, category,
-  date: index ? "2026-09-17T04:30:00Z" : "2026-09-15T03:00:00Z",
-  title: category === "Clear Insight" ? (index ? "Sensory feedback — Emulsion" : "Hydration feedback — Emulsion") : category === "Formula Rescue" ? `Shampoo rescue — Demo ${index + 1}` : `Sensory optimization — Demo ${index + 1}`,
-  summary: category === "Formula Rescue" ? "Contoh riwayat pencarian formula ketika bahan tidak tersedia." : index ? "Keluhan after-feel lengket; target perlu dikonfirmasi R&D." : "Keluhan kurang melembapkan; target perbaikan hydration.",
-  input: category === "Formula Rescue" ? { formula_id: "DEMO-F01", unavailable_ingredient: "Ingredient demo A" } : { clean_insight: index ? "After-feel terlalu lengket" : "Produk kurang melembapkan", product_system: "Emulsion demo" },
-  metrics: category === "Clear Insight" ? [
-    { name: "Hydration", baseline: null, candidate: null, unit: "Belum diukur", note: "Target: tingkatkan; perlu konfirmasi R&D" },
-    { name: "Stickiness", baseline: null, candidate: null, unit: "Belum diukur", note: index ? "Target: kurangi" : "Pantau trade-off" },
-    { name: "Oiliness", baseline: null, candidate: null, unit: "Belum diukur", note: "Pantau trade-off" },
-  ] : category === "Formula Rescue" ? [
-    { name: "Stability estimate", baseline: 80, candidate: index ? 83 : 88, unit: "% · angka dummy", note: "Ilustrasi tampilan; bukan inferensi model" },
-    { name: "Composition similarity", baseline: null, candidate: index ? 75 : 69, unit: "% · angka dummy", note: "Kemiripan komposisi, bukan atribut sensory" },
-    { name: "Sensory properties", baseline: null, candidate: null, unit: "Tidak tersedia", note: "Model rescue tidak memprediksi sensory" },
-  ] : [
-    { name: "Hydration", baseline: 1.2, candidate: index ? 1.4 : 1.6, unit: "Unit demo", note: "Angka dummy, bukan skala publikasi" },
-    { name: "Stickiness", baseline: 3.1, candidate: index ? 2.4 : 2.8, unit: "Unit demo", note: "Angka dummy, bukan output model" },
-    { name: "Oiliness", baseline: 2.6, candidate: index ? 2.5 : 2.7, unit: "Unit demo", note: "Angka dummy, bukan output model" },
-    { name: "Consistency", baseline: null, candidate: null, unit: "Belum tersedia", note: "Tidak dievaluasi" },
-  ],
-})));
+type Tab = "Clear Insight" | "Formula Rescue" | "AI Reformulations";
 
-function format(date: string) {
-  return new Intl.DateTimeFormat("id-ID", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Jakarta" }).format(new Date(date));
+function formatDate(value: string) {
+  return new Intl.DateTimeFormat("en-GB", { dateStyle: "medium", timeStyle: "short" }).format(new Date(value));
 }
-function payload(row: Session) {
-  return { demo: true, session_id: row.id, timestamp_utc: row.date, category: row.category, input: row.input, output: { metrics: row.metrics, evidence_type: "UI_FIXTURE_ONLY", model_executed: false }, disclaimer: "Predicted / estimated and requires physical laboratory validation." };
-}
-function download(row: Session, type: "csv" | "json") {
-  const cell = (value: unknown) => {
-    const text = String(value ?? "");
-    const safe = /^[=+@\-\t\r]/.test(text) ? "'" + text : text;
-    return '"' + safe.replaceAll('"', '""') + '"';
-  };
-  const csv = [
-    ["session_id", "timestamp_utc", "demo", "attribute", "baseline", "candidate", "unit", "note", "disclaimer"],
-    ...row.metrics.map(metric => [row.id, row.date, true, metric.name, metric.baseline, metric.candidate, metric.unit, metric.note, payload(row).disclaimer]),
-  ].map(line => line.map(cell).join(",")).join("\r\n");
-  const text = type === "json" ? JSON.stringify(payload(row), null, 2) : "\uFEFF" + csv;
-  const url = URL.createObjectURL(new Blob([text], { type: type === "json" ? "application/json" : "text/csv;charset=utf-8" }));
+
+function download(row: SessionAnalysis, raw: boolean) {
+  const safe = row.title.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "").slice(0, 60) || "analysis";
+  const content = raw
+    ? JSON.stringify(row, null, 2)
+    : `field,value\ntitle,${JSON.stringify(row.title)}\ntype,${row.kind}\nstatus,${row.status}\ncreated_at,${row.createdAt}\ninsight,${JSON.stringify(row.insight)}\nsummary,${JSON.stringify(row.summary)}\n`;
+  const url = URL.createObjectURL(new Blob([content], { type: raw ? "application/json" : "text/csv" }));
   const anchor = document.createElement("a");
-  anchor.href = url; anchor.download = row.id + "-DEMO." + type;
-  document.body.appendChild(anchor); anchor.click(); anchor.remove();
+  anchor.href = url;
+  anchor.download = `${safe}.${raw ? "json" : "csv"}`;
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
-function Preview({ row }: { row: Session }) {
-  const metrics = row.metrics.filter(item => item.candidate !== null);
-  if (!metrics.length) return <div className="insight-preview"><p className="eyebrow">TECHNICAL TARGETS / DEMO</p>{row.metrics.map(item => <div key={item.name}><strong>{item.name}</strong><span>{item.note}</span></div>)}</div>;
-  return <div className="metric-preview"><div className="chart-legend"><span>● Baseline dummy</span><span>● Candidate dummy</span></div>{metrics.map(item => {
-    const max = Math.max(item.baseline ?? 0, item.candidate ?? 0, 1);
-    return <div className="metric-row" key={item.name}><span>{item.name}</span><div><div className="metric-bar baseline" style={{ width: `${(item.baseline ?? 0) / max * 100}%` }} /><div className="metric-bar candidate" style={{ width: `${(item.candidate ?? 0) / max * 100}%` }} /></div><span>{item.candidate}</span></div>;
-  })}<p>Perbandingan hanya dalam atribut yang sama, bukan antarunit.<br />Angka dummy; bukan hasil model atau lab.</p></div>;
-}
 
-export default function Library({ onUseInsight }: { onUseInsight?: (text: string) => void }) {
-  const [tab, setTab] = useState<Category>("Clear Insight");
-  const [order, setOrder] = useState("new");
-  const [selected, setSelected] = useState<string | null>(null);
-  const [raw, setRaw] = useState(false);
-  const [menu, setMenu] = useState<string | null>(null);
-  const rows = sessions.filter(row => row.category === tab).sort((a, b) => (order === "new" ? -1 : 1) * (Date.parse(a.date) - Date.parse(b.date)));
-  const detail = rows.find(row => row.id === selected);
-  function open(row: Session) { setSelected(row.id); setRaw(false); setMenu(null); }
-  return <section className="library">
-    <p className="eyebrow">WORKSPACE KNOWLEDGE</p><h1>Dataset Library</h1><p>Jelajahi insight, hasil rescue, dan eksperimen reformulation.</p>
-    <p className="demo-note"><strong>DATA DEMO</strong> — Angka dan sesi hanya fixture desain. Tidak ada model/lab yang dijalankan atau riwayat backend yang dimuat.</p>
-    <div className="library-tabs" aria-label="Kategori library">{tabs.map(item => <button key={item} aria-pressed={tab === item} onClick={() => { setTab(item); setSelected(null); setRaw(false); setMenu(null); }}>{item}</button>)}</div>
-    <div className="library-toolbar"><label>Sort by date <select value={order} onChange={event => setOrder(event.target.value)}><option value="new">Terbaru dahulu</option><option value="old">Terlama dahulu</option></select></label><span className="badge">{rows.length} SESI DEMO</span></div>
-    {detail ? <section className="sensory-detail">
-      <button className="back" onClick={() => { setSelected(null); setRaw(false); }}>← Kembali ke library</button>
-      <div className="detail-heading"><div><span className="badge">DATA DEMO</span><h2>{detail.title}</h2><time dateTime={detail.date}>{format(detail.date)} WIB</time></div><button className="mode-toggle" onClick={() => download(detail, raw ? "json" : "csv")}>Download {raw ? "session JSON" : "results CSV"}</button></div>
-      <p>{detail.summary}</p>
-      {tab === "Clear Insight" && onUseInsight && <button className="mode-toggle" onClick={() => onUseInsight(String(detail.input.clean_insight ?? ""))}>Gunakan insight demo di AI Reformulation →</button>}
-      <div className="library-tabs"><button aria-pressed={!raw} onClick={() => setRaw(false)}>Simple Mode</button><button aria-pressed={raw} onClick={() => setRaw(true)}>Session Detail</button></div>
-      {raw ? <div className="raw-detail"><h3>Session Detail / sanitized demo JSON</h3><p className="raw-note">Bukan kontrol izin akses. Jangan tampilkan token, password, atau data rahasia pada demo publik.</p><pre>{JSON.stringify(payload(detail), null, 2)}</pre></div> : <div className="trace-table-wrap"><table className="trace-table sensory-table"><caption>{tab === "Formula Rescue" ? "Ringkasan rescue — sensory tidak didukung" : tab === "Clear Insight" ? "Target sensory dari clean insight — belum ada pengukuran" : "Detail sensory — baseline vs candidate dummy"}</caption><thead><tr><th scope="col">Attribute</th><th scope="col">Baseline</th><th scope="col">Candidate</th><th scope="col">Unit</th><th scope="col">Catatan</th></tr></thead><tbody>{detail.metrics.map(item => <tr key={item.name}><th scope="row">{item.name}</th><td>{item.baseline ?? "—"}</td><td>{item.candidate ?? "—"}</td><td>{item.unit}</td><td>{item.note}</td></tr>)}</tbody></table></div>}
-    </section> : <div className="session-grid">{rows.map(row => <article className="session-card result-card" key={row.id}>
-      <div className="result-card-heading"><h2><button className="card-title" onClick={() => open(row)}>{row.title}</button></h2><div className="download-menu" onKeyDown={event => { if (event.key === "Escape") { setMenu(null); (event.currentTarget.querySelector("button") as HTMLButtonElement)?.focus(); } }}>
-        <button className="ellipsis" aria-label={`Download menu: ${row.title}`} aria-expanded={menu === row.id} aria-controls={`download-${row.id}`} onClick={() => setMenu(menu === row.id ? null : row.id)}>⋯</button>
-        {menu === row.id && <div id={`download-${row.id}`} className="download-popover"><button onClick={() => { download(row, "csv"); setMenu(null); }}>↓ Download results (CSV)</button><button onClick={() => { download(row, "json"); setMenu(null); }}>↓ Download session (JSON)</button></div>}
-      </div></div>
-      <time dateTime={row.date}>{format(row.date)} WIB</time><p>{row.summary}</p><Preview row={row} /><span className="badge">DATA DEMO / {row.id}</span>
-    </article>)}</div>}
+export default function Library({ analyses, onUseInsight }: { analyses: SessionAnalysis[]; onUseInsight?: (text: string) => void }) {
+  const [tab, setTab] = useState<Tab>("Clear Insight");
+  const [order, setOrder] = useState<"new" | "old">("new");
+  const [detailId, setDetailId] = useState("");
+  const [advanced, setAdvanced] = useState(false);
+  const rows = useMemo(() => analyses.filter(item => tab === "Formula Rescue" ? item.kind === "rescue" : item.kind === "reformulation" && (tab !== "Clear Insight" || Boolean(item.insight.trim()))).sort((a, b) => (order === "new" ? -1 : 1) * a.createdAt.localeCompare(b.createdAt)), [analyses, order, tab]);
+  const detail = rows.find(item => item.id === detailId);
+
+  return <section className="library-feature">
+    <p className="eyebrow">SESSION DATASET LIBRARY</p><h1>From analysis to<br /><span>traceable evidence.</span></h1><p>Data pada halaman ini hanya berasal dari API run yang berhasil selama sesi browser saat ini.</p>
+    <div className="library-tabs" role="tablist" aria-label="Dataset category">{(["Clear Insight", "Formula Rescue", "AI Reformulations"] as Tab[]).map(item => <button role="tab" aria-selected={tab === item} aria-pressed={tab === item} key={item} onClick={() => { setTab(item); setDetailId(""); setAdvanced(false); }}>{item}</button>)}</div>
+    <div className="library-toolbar"><label>Sort by date <select value={order} onChange={event => setOrder(event.target.value as "new" | "old")}><option value="new">Newest first</option><option value="old">Oldest first</option></select></label><span className="badge">{rows.length} SESSION RECORD{rows.length === 1 ? "" : "S"}</span></div>
+    {!detail ? rows.length ? <div className="session-grid">{rows.map(row => <article className="session-card" key={row.id}><span className="badge">{row.kind === "rescue" ? "FORMULA RESCUE" : tab.toUpperCase()}</span><button className="session-title" onClick={() => setDetailId(row.id)}><h2>{tab === "Clear Insight" ? row.insight : row.title}</h2></button><time dateTime={row.createdAt}>{formatDate(row.createdAt)}</time><p>{row.summary}</p><div className="session-card-footer"><span className="status-pill status-complete">{row.status}</span><button className="mode-toggle" onClick={() => download(row, false)}>Download results</button></div></article>)}</div> : <div className="empty-state"><h2>No session data yet</h2><p>Run {tab === "Formula Rescue" ? "Formula Rescue" : "a reformulation analysis"} successfully. Its real response will then appear here.</p></div>
+    : <section className="library-detail"><button className="back" onClick={() => { setDetailId(""); setAdvanced(false); }}>← Back to library</button><div className="detail-heading"><div><span className="badge">{detail.kind === "rescue" ? "FORMULA RESCUE" : "AI REFORMULATION"}</span><h2>{detail.title}</h2><time dateTime={detail.createdAt}>{formatDate(detail.createdAt)}</time></div><button className="mode-toggle" onClick={() => download(detail, advanced)}>Download {advanced ? "session JSON" : "results CSV"}</button></div>
+      <div className="simple-detail"><dl className="review-list"><dt>Status</dt><dd>{detail.status}</dd><dt>Insight / goal</dt><dd>{detail.insight || "No contextual insight was entered."}</dd><dt>Summary</dt><dd>{detail.summary}</dd></dl>{tab === "Clear Insight" && onUseInsight && <button className="secondary" onClick={() => onUseInsight(detail.insight)}>Use this insight in New Analysis →</button>}</div>
+      <button className="mode-toggle advanced-toggle" onClick={() => setAdvanced(value => !value)}>{advanced ? "Hide Session Detail" : "Open Session Detail"}</button>
+      {advanced && <div className="raw-detail"><h3>Session Detail / sanitized JSON</h3><p className="raw-note">This view contains the executed inputs and API response captured in this browser session. It is not an access-control layer.</p><pre>{JSON.stringify(detail.payload, null, 2)}</pre></div>}
+    </section>}
   </section>;
 }

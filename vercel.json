@@ -20,7 +20,7 @@
       "functions": {
         "backend/main.py": {
           "maxDuration": 60,
-          "includeFiles": "{backend/*.py,Hackathon/{backend,rescue}/*.py,Hackathon/data/processed/*.csv,Hackathon/ml/artifacts/*.json,ml/*.py,ml/artifacts/mercurio_polynomial_ridge_v1/{*.joblib,model_metadata.json,prediction_example.json}}",
+          "includeFiles": "{backend/*.py,Hackathon/{backend,rescue}/*.py,Hackathon/data/processed/*.csv,Hackathon/ml/artifacts/*.json,ml/*.py,ml/artifacts/synthetic_product_polynomial_ridge_v1/{*.joblib,model_metadata.json,product_catalog.json,prediction_example.json}}",
           "excludeFiles": "{frontend/**,docs/**,tmp/**,temp/**,data/**,ml/{tests,benchmarks}/**,ml/artifacts/**/*.csv,**/__pycache__/**,**/*.{pyc,md,xlsx,zip,png},**/.git/**,**/node_modules/**}"
         }
       }

@@ -24,28 +24,38 @@ The API never trains during a request and never imports the old training-at-impo
 - Fixture: formula 7, Plantacare 818 unavailable, Top 3 IDs 288, 292, 190.
 - Evaluation/history: `FORMULA_RESCUE_PREPROCESSING_TRAINING_REPORT.md`.
 
-### AI Reformulation
+### AI Reformulation — current synthetic product prototype (2026-09-18)
 
-- Artifact directory: `ml/artifacts/mercurio_polynomial_ridge_v1/`.
-- `sensory_model.joblib`: trusted team artifact, PolynomialFeatures degree 2
-  without bias → StandardScaler → multi-output Ridge, alpha 1e-6.
-- `model_metadata.json`: order, ranges, model version and SHA256.
-- Features in order: `phytantriol_pct` (0–3%), `soy_lecithin_pct` (0–3%),
-  `cct_pct` (0–5%). Exactly three finite numeric inputs; no imputation.
-- Targets in order: `hydration_ratio`, `stickiness_score_0_10`,
-  `oiliness_score_0_10`, `consistency_index`.
-- Predictor: `ml/predict_mercurio.py`. Pipeline owns scaling and polynomial
-  expansion, so neither API nor frontend repeats those transforms.
-- All outputs must be finite/nonnegative; the two sensory scores must be ≤10.
-- Loader validates artifact checksum, feature/target order and actual inference
-  against `prediction_example.json` with stored atol/rtol.
-- 153 generated rows derived from published Mercurio equations; final model
-  fitted to those 153 rows. Evaluation used 122 development / 31 holdout rows
-  and grouped CV. Near-perfect R² reflects equation reproduction, **not physical
-  validation or clinical/product performance**.
-- Optimization is a separate bounded numerical search, not a new trained model.
-- Deployment dependency versions: `backend/requirements.txt`; observed local
-  Python 3.12 runtime. No fresh-environment/transitive-lock verification yet.
+- Artifact: `ml/artifacts/synthetic_product_polynomial_ridge_v1/`.
+- Loader: `ml/predict_product.py`; backend cache verifies an actual fixture prediction.
+- 22 product profiles in 11 categories. Public product names identify the profile;
+  factor identities, ranges, baselines and response equations are invented prototype data,
+  not Paragon manufacturing formulas or measured performance.
+- API inputs: required `product_id` plus `factor_a_pct`, `factor_b_pct`,
+  `factor_c_pct`, finite percentages inside that product's catalog limits.
+- Backend derives category and normalizes percentages by each profile factor maximum.
+- Ordered model columns: `product_id`, `category_id`, `factor_a_ratio`,
+  `factor_b_ratio`, `factor_c_ratio`.
+- Pipeline: degree-2 numeric polynomial without bias -> StandardScaler;
+  product/category OneHotEncoder; multi-output Ridge alpha=0.05.
+- Ordered targets: hydration_ratio, stickiness_score_0_10, oiliness_score_0_10,
+  consistency_index. Units: synthetic ratio, two illustrative 0–10 scores,
+  arbitrary synthetic consistency index (not measured viscosity).
+- 2,112 generated rows (96/product), seed 20260918. Stratified 80/20 split:
+  1,689 development / 423 holdout before fitting preprocessing.
+  Each product is seen during training; no unseen-product or physical-validation claim.
+- Evaluation model fits development only. Serving artifact fits all rows after evaluation.
+  Per-target MAE/RMSE/R² and a mean baseline are in evaluation.json.
+- Catalog and model SHA256 are validated before trusted joblib loading.
+  Unknown product, missing/nonfinite concentrations or out-of-profile values return 422.
+- Optimization: Latin hypercube search, up to 10,000 compositions within the selected
+  profile, numerical target filtering, normalized minimal-change ranking and diversity.
+  Product-aware inference, not frontend canned candidate responses.
+- Provenance: SYNTHETIC_PROTOTYPE_DATA. No lab accuracy, safety, efficacy or stability claim.
+- Training ran on local CPU, NOT Cloudeka; event training evidence is still missing.
+- Historical artifact `ml/artifacts/mercurio_polynomial_ridge_v1/` and loader
+  `ml/predict_mercurio.py` are preserved, along with their tests and reports.
+- Detailed boundary and verification: `docs/PRODUCT_MODEL_INTEGRATION.md`.
 
 Trusted joblib only: SHA256 detects a mismatch against the metadata, but does
 not authenticate an artifact if both metadata and model are replaced. Never

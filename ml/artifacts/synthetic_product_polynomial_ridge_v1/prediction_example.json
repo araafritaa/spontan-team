@@ -1,0 +1,21 @@
+{
+  "model_version": "synthetic_product_polynomial_ridge_v1",
+  "input": {
+    "product_id": "wardah-lightening-day-cream",
+    "composition": {
+      "factor_a_pct": 4.0,
+      "factor_b_pct": 8.0,
+      "factor_c_pct": 2.2
+    }
+  },
+  "expected_output": {
+    "hydration_ratio": 1.2099247630542627,
+    "stickiness_score_0_10": 3.348776929426777,
+    "oiliness_score_0_10": 3.0822507565972086,
+    "consistency_index": 19225.759997512032
+  },
+  "rtol": 1e-09,
+  "atol": 1e-07,
+  "physical_measurement": false,
+  "disclaimer": "Predicted / estimated and requires physical laboratory validation."
+}

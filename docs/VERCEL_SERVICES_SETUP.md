@@ -1,5 +1,9 @@
 # Spontan: deployment Vercel Services
 
+Panduan terbaru kedua engine dan perbaikan env localhost:
+[DEPLOY_TWO_ENGINES.md](DEPLOY_TWO_ENGINES.md). Ikuti fixture produk sintetis
+terbaru; angka hasil pemeriksaan di bawah adalah checkpoint 17 September.
+
 Checkpoint 17 September 2026: konfigurasi disiapkan dan diuji lokal, **belum
 dibuktikan berjalan di Vercel**. Ini menggantikan rencana dua project pada
 handoff sebelumnya; project Formula Rescue lama tidak diubah.
@@ -19,8 +23,8 @@ Backend tidak diberi route publik; binding menghubungkan kedua service dalam
 deployment yang sama. Binding tersedia saat runtime, bukan saat build.
 Lihat [dokumentasi binding Vercel](https://vercel.com/docs/services/bindings).
 
-AI predictor/optimizer sudah ada di backend, tetapi **AI wizard frontend belum
-memanggilnya**. Deployment ini bukan klaim seluruh fitur UI sudah terintegrasi.
+AI predictor/optimizer dan wizard frontend sudah terhubung melalui Route Handler
+same-origin. Deployment ini belum membuktikan runtime publik berhasil.
 Riwayat library masih demo; database, auth nyata dan retraining bulanan belum ada.
 
 ## Tiga tindakan di dashboard Vercel

@@ -26,15 +26,16 @@ di `frontend`, backend FastAPI di root dengan binding internal. Panduan:
 [VERCEL_SERVICES_SETUP.md](VERCEL_SERVICES_SETUP.md).
 Frontend memakai binding runtime lebih dulu; jika binding/config tidak ada di
 Vercel, proxy gagal dengan 503, bukan diam-diam memakai API lama. Fallback lama
-hanya berlaku di pengembangan non-Vercel. AI wizard belum dihubungkan ke API baru.
+hanya berlaku di pengembangan non-Vercel. AI wizard kini terhubung ke API baru;
+AI tidak memakai fallback lama bila konfigurasi unified backend tidak ada.
 Schema, globs, pin dependency, tes lokal dan build frontend sudah diperiksa;
 clean install Linux, bundle akhir dan koneksi runtime Vercel masih pending.
 
 `Hackathon/vercel.json` dan `Hackathon/pyproject.toml` lama bukan konfigurasi
 backend gabungan baru dan tidak disertakan pada paket serving minimal ini.
 Jangan memilih Root Directory `Hackathon` untuk backend gabungan.
-Sesudah Services online, uji readiness lewat frontend dan hubungkan wizard AI
-pada tahap berikutnya. Deployment lama tetap terpisah sampai keputusan migrasi.
+Sesudah Services online, uji readiness serta wizard AI lewat domain frontend.
+Deployment lama tetap terpisah sampai keputusan migrasi.
 
 ## Teman mengambil project
 

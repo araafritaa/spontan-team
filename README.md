@@ -4,7 +4,15 @@ Workspace ini berawal dari template persiapan dan sekarang memiliki frontend dem
 Formula Rescue serta model sensory emulsi. Konfirmasi aturan panitia sebelum
 membawa starter code; jangan menyatakan persiapan ini dibuat saat kompetisi.
 
-## Checkpoint backend terbaru — 17 September 2026
+## Checkpoint terbaru — 18 September 2026
+
+AI Reformulation kini memakai Choose Brand -> Choose Product -> Category otomatis,
+tanpa formula version. Katalog backend berisi 22 profil / 11 kategori / 6 brand.
+Model product-aware dilatih pada 2.112 baris **sintetis**, bukan formula asli Paragon
+atau data lab; model Mercurio lama tetap disimpan terpisah. Implementasi, preprocessing,
+training, metrik, batas ilmiah dan hasil verifikasi:
+[docs/PRODUCT_MODEL_INTEGRATION.md](docs/PRODUCT_MODEL_INTEGRATION.md).
+Belum push/deploy; rilis frontend dan backend bersama karena kontrak AI berubah.
 
 FastAPI lokal sudah menyatukan Formula Rescue (XGBoost) dan AI Reformulation
 (Polynomial + Ridge + bounded optimizer). Panduan dan fixture ada di
@@ -18,7 +26,11 @@ Konfigurasi satu project **Vercel Services** sekarang disiapkan untuk frontend
 dan backend gabungan. Panduan dan batas verifikasinya:
 [docs/VERCEL_SERVICES_SETUP.md](docs/VERCEL_SERVICES_SETUP.md).
 Runtime Vercel belum diverifikasi; project Formula Rescue lama tidak diubah.
-Frontend AI belum terhubung, dan penyimpanan/lab feedback bulanan masih rencana. Bagian di bawah
+Panduan terbaru untuk memperbaiki localhost dan deploy kedua engine:
+[docs/DEPLOY_TWO_ENGINES.md](docs/DEPLOY_TWO_ENGINES.md).
+Frontend AI kini terhubung ke predictor/optimizer melalui proxy same-origin;
+hasil verifikasi: [docs/AI_FRONTEND_INTEGRATION.md](docs/AI_FRONTEND_INTEGRATION.md).
+Penyimpanan/lab feedback bulanan masih rencana. Bagian di bawah
 tetap panduan starter/team, bukan klaim semua integrasi sudah selesai.
 
 ## Mulai

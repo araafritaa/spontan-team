@@ -1,0 +1,756 @@
+{
+  "catalog_version": "synthetic_product_polynomial_ridge_v1",
+  "data_origin": "SYNTHETIC_PROTOTYPE_DATA",
+  "notice": "Product names are public identifiers. Every factor profile and baseline is synthetic prototype data, not a Paragon formula.",
+  "products": [
+    {
+      "product_id": "wardah-lightening-day-cream",
+      "brand": "Wardah",
+      "product_name": "Lightening Day Cream Advanced Niacinamide",
+      "category_id": "moisturizing_cream",
+      "category_name": "Moisturizing Cream",
+      "factors": [
+        {
+          "key": "factor_a_pct",
+          "label": "Humectant system",
+          "unit": "%",
+          "min": 0.0,
+          "max": 10.0,
+          "baseline": 4.0
+        },
+        {
+          "key": "factor_b_pct",
+          "label": "Emollient system",
+          "unit": "%",
+          "min": 0.0,
+          "max": 15.0,
+          "baseline": 8.0
+        },
+        {
+          "key": "factor_c_pct",
+          "label": "Structurant",
+          "unit": "%",
+          "min": 0.0,
+          "max": 5.0,
+          "baseline": 2.2
+        }
+      ],
+      "profile_origin": "SYNTHETIC_PROTOTYPE_DATA"
+    },
+    {
+      "product_id": "emina-bright-stuff-moisturizing-cream",
+      "brand": "Emina",
+      "product_name": "Bright Stuff Moisturizing Cream",
+      "category_id": "moisturizing_cream",
+      "category_name": "Moisturizing Cream",
+      "factors": [
+        {
+          "key": "factor_a_pct",
+          "label": "Humectant system",
+          "unit": "%",
+          "min": 0.0,
+          "max": 10.0,
+          "baseline": 3.52
+        },
+        {
+          "key": "factor_b_pct",
+          "label": "Emollient system",
+          "unit": "%",
+          "min": 0.0,
+          "max": 15.0,
+          "baseline": 7.04
+        },
+        {
+          "key": "factor_c_pct",
+          "label": "Structurant",
+          "unit": "%",
+          "min": 0.0,
+          "max": 5.0,
+          "baseline": 1.936
+        }
+      ],
+      "profile_origin": "SYNTHETIC_PROTOTYPE_DATA"
+    },
+    {
+      "product_id": "wardah-radiant-charge-gel",
+      "brand": "Wardah",
+      "product_name": "Radiant Charge Gel Moisturizer",
+      "category_id": "gel_moisturizer",
+      "category_name": "Gel Moisturizer",
+      "factors": [
+        {
+          "key": "factor_a_pct",
+          "label": "Humectant system",
+          "unit": "%",
+          "min": 0.0,
+          "max": 10.0,
+          "baseline": 4.5
+        },
+        {
+          "key": "factor_b_pct",
+          "label": "Light emollient",
+          "unit": "%",
+          "min": 0.0,
+          "max": 8.0,
+          "baseline": 3.0
+        },
+        {
+          "key": "factor_c_pct",
+          "label": "Gel structurant",
+          "unit": "%",
+          "min": 0.0,
+          "max": 4.0,
+          "baseline": 1.2
+        }
+      ],
+      "profile_origin": "SYNTHETIC_PROTOTYPE_DATA"
+    },
+    {
+      "product_id": "emina-water-bright-glow-gel",
+      "brand": "Emina",
+      "product_name": "Water Bright Glow Gel",
+      "category_id": "gel_moisturizer",
+      "category_name": "Gel Moisturizer",
+      "factors": [
+        {
+          "key": "factor_a_pct",
+          "label": "Humectant system",
+          "unit": "%",
+          "min": 0.0,
+          "max": 10.0,
+          "baseline": 4.05
+        },
+        {
+          "key": "factor_b_pct",
+          "label": "Light emollient",
+          "unit": "%",
+          "min": 0.0,
+          "max": 8.0,
+          "baseline": 2.7
+        },
+        {
+          "key": "factor_c_pct",
+          "label": "Gel structurant",
+          "unit": "%",
+          "min": 0.0,
+          "max": 4.0,
+          "baseline": 1.08
+        }
+      ],
+      "profile_origin": "SYNTHETIC_PROTOTYPE_DATA"
+    },
+    {
+      "product_id": "wardah-hydra-rose-cleanser",
+      "brand": "Wardah",
+      "product_name": "Hydra Rose Gel-to-Foam Cleanser",
+      "category_id": "facial_cleanser",
+      "category_name": "Facial Cleanser",
+      "factors": [
+        {
+          "key": "factor_a_pct",
+          "label": "Primary surfactant",
+          "unit": "%",
+          "min": 0.0,
+          "max": 18.0,
+          "baseline": 9.0
+        },
+        {
+          "key": "factor_b_pct",
+          "label": "Secondary surfactant",
+          "unit": "%",
+          "min": 0.0,
+          "max": 10.0,
+          "baseline": 4.0
+        },
+        {
+          "key": "factor_c_pct",
+          "label": "Conditioning humectant",
+          "unit": "%",
+          "min": 0.0,
+          "max": 8.0,
+          "baseline": 2.5
+        }
+      ],
+      "profile_origin": "SYNTHETIC_PROTOTYPE_DATA"
+    },
+    {
+      "product_id": "kahf-oil-comedo-face-wash",
+      "brand": "Kahf",
+      "product_name": "Triple Action Oil and Comedo Defense Face Wash",
+      "category_id": "facial_cleanser",
+      "category_name": "Facial Cleanser",
+      "factors": [
+        {
+          "key": "factor_a_pct",
+          "label": "Primary surfactant",
+          "unit": "%",
+          "min": 0.0,
+          "max": 18.0,
+          "baseline": 9.9
+        },
+        {
+          "key": "factor_b_pct",
+          "label": "Secondary surfactant",
+          "unit": "%",
+          "min": 0.0,
+          "max": 10.0,
+          "baseline": 4.4
+        },
+        {
+          "key": "factor_c_pct",
+          "label": "Conditioning humectant",
+          "unit": "%",
+          "min": 0.0,
+          "max": 8.0,
+          "baseline": 2.75
+        }
+      ],
+      "profile_origin": "SYNTHETIC_PROTOTYPE_DATA"
+    },
+    {
+      "product_id": "wardah-radiant-charge-serum",
+      "brand": "Wardah",
+      "product_name": "Radiant Charge Serum",
+      "category_id": "face_serum",
+      "category_name": "Face Serum",
+      "factors": [
+        {
+          "key": "factor_a_pct",
+          "label": "Functional active system",
+          "unit": "%",
+          "min": 0.0,
+          "max": 10.0,
+          "baseline": 4.0
+        },
+        {
+          "key": "factor_b_pct",
+          "label": "Humectant system",
+          "unit": "%",
+          "min": 0.0,
+          "max": 12.0,
+          "baseline": 5.0
+        },
+        {
+          "key": "factor_c_pct",
+          "label": "Solubilizer / structurant",
+          "unit": "%",
+          "min": 0.0,
+          "max": 5.0,
+          "baseline": 1.5
+        }
+      ],
+      "profile_origin": "SYNTHETIC_PROTOTYPE_DATA"
+    },
+    {
+      "product_id": "emina-bright-stuff-serum",
+      "brand": "Emina",
+      "product_name": "Bright Stuff Face Serum",
+      "category_id": "face_serum",
+      "category_name": "Face Serum",
+      "factors": [
+        {
+          "key": "factor_a_pct",
+          "label": "Functional active system",
+          "unit": "%",
+          "min": 0.0,
+          "max": 10.0,
+          "baseline": 3.6
+        },
+        {
+          "key": "factor_b_pct",
+          "label": "Humectant system",
+          "unit": "%",
+          "min": 0.0,
+          "max": 12.0,
+          "baseline": 4.5
+        },
+        {
+          "key": "factor_c_pct",
+          "label": "Solubilizer / structurant",
+          "unit": "%",
+          "min": 0.0,
+          "max": 5.0,
+          "baseline": 1.35
+        }
+      ],
+      "profile_origin": "SYNTHETIC_PROTOTYPE_DATA"
+    },
+    {
+      "product_id": "wardah-hydra-rose-toner",
+      "brand": "Wardah",
+      "product_name": "Hydra Rose Petal Infused Toner",
+      "category_id": "face_toner",
+      "category_name": "Face Toner",
+      "factors": [
+        {
+          "key": "factor_a_pct",
+          "label": "Humectant system",
+          "unit": "%",
+          "min": 0.0,
+          "max": 10.0,
+          "baseline": 3.5
+        },
+        {
+          "key": "factor_b_pct",
+          "label": "Functional active system",
+          "unit": "%",
+          "min": 0.0,
+          "max": 6.0,
+          "baseline": 2.0
+        },
+        {
+          "key": "factor_c_pct",
+          "label": "Solubilizer",
+          "unit": "%",
+          "min": 0.0,
+          "max": 4.0,
+          "baseline": 1.0
+        }
+      ],
+      "profile_origin": "SYNTHETIC_PROTOTYPE_DATA"
+    },
+    {
+      "product_id": "emina-double-the-moist-toner",
+      "brand": "Emina",
+      "product_name": "Double The Moist Face Toner",
+      "category_id": "face_toner",
+      "category_name": "Face Toner",
+      "factors": [
+        {
+          "key": "factor_a_pct",
+          "label": "Humectant system",
+          "unit": "%",
+          "min": 0.0,
+          "max": 10.0,
+          "baseline": 3.08
+        },
+        {
+          "key": "factor_b_pct",
+          "label": "Functional active system",
+          "unit": "%",
+          "min": 0.0,
+          "max": 6.0,
+          "baseline": 1.76
+        },
+        {
+          "key": "factor_c_pct",
+          "label": "Solubilizer",
+          "unit": "%",
+          "min": 0.0,
+          "max": 4.0,
+          "baseline": 0.88
+        }
+      ],
+      "profile_origin": "SYNTHETIC_PROTOTYPE_DATA"
+    },
+    {
+      "product_id": "wardah-uv-shield-physical",
+      "brand": "Wardah",
+      "product_name": "UV Shield Physical Sunscreen Serum",
+      "category_id": "sunscreen",
+      "category_name": "Sunscreen",
+      "factors": [
+        {
+          "key": "factor_a_pct",
+          "label": "UV filter system",
+          "unit": "%",
+          "min": 0.0,
+          "max": 25.0,
+          "baseline": 15.0
+        },
+        {
+          "key": "factor_b_pct",
+          "label": "Emollient system",
+          "unit": "%",
+          "min": 0.0,
+          "max": 15.0,
+          "baseline": 6.0
+        },
+        {
+          "key": "factor_c_pct",
+          "label": "Structurant / dispersant",
+          "unit": "%",
+          "min": 0.0,
+          "max": 6.0,
+          "baseline": 2.0
+        }
+      ],
+      "profile_origin": "SYNTHETIC_PROTOTYPE_DATA"
+    },
+    {
+      "product_id": "emina-sun-battle-45",
+      "brand": "Emina",
+      "product_name": "Sun Battle SPF 45 PA+++",
+      "category_id": "sunscreen",
+      "category_name": "Sunscreen",
+      "factors": [
+        {
+          "key": "factor_a_pct",
+          "label": "UV filter system",
+          "unit": "%",
+          "min": 0.0,
+          "max": 25.0,
+          "baseline": 13.8
+        },
+        {
+          "key": "factor_b_pct",
+          "label": "Emollient system",
+          "unit": "%",
+          "min": 0.0,
+          "max": 15.0,
+          "baseline": 5.52
+        },
+        {
+          "key": "factor_c_pct",
+          "label": "Structurant / dispersant",
+          "unit": "%",
+          "min": 0.0,
+          "max": 6.0,
+          "baseline": 1.84
+        }
+      ],
+      "profile_origin": "SYNTHETIC_PROTOTYPE_DATA"
+    },
+    {
+      "product_id": "wardah-lightening-micellar",
+      "brand": "Wardah",
+      "product_name": "Lightening Oil-Infused Micellar Water",
+      "category_id": "micellar_water",
+      "category_name": "Micellar Water",
+      "factors": [
+        {
+          "key": "factor_a_pct",
+          "label": "Micellar surfactant",
+          "unit": "%",
+          "min": 0.0,
+          "max": 8.0,
+          "baseline": 2.5
+        },
+        {
+          "key": "factor_b_pct",
+          "label": "Humectant system",
+          "unit": "%",
+          "min": 0.0,
+          "max": 10.0,
+          "baseline": 3.0
+        },
+        {
+          "key": "factor_c_pct",
+          "label": "Oil / solubilizer system",
+          "unit": "%",
+          "min": 0.0,
+          "max": 6.0,
+          "baseline": 1.5
+        }
+      ],
+      "profile_origin": "SYNTHETIC_PROTOTYPE_DATA"
+    },
+    {
+      "product_id": "emina-skin-buddy-micellar",
+      "brand": "Emina",
+      "product_name": "Skin Buddy Micellar Water",
+      "category_id": "micellar_water",
+      "category_name": "Micellar Water",
+      "factors": [
+        {
+          "key": "factor_a_pct",
+          "label": "Micellar surfactant",
+          "unit": "%",
+          "min": 0.0,
+          "max": 8.0,
+          "baseline": 2.2
+        },
+        {
+          "key": "factor_b_pct",
+          "label": "Humectant system",
+          "unit": "%",
+          "min": 0.0,
+          "max": 10.0,
+          "baseline": 2.64
+        },
+        {
+          "key": "factor_c_pct",
+          "label": "Oil / solubilizer system",
+          "unit": "%",
+          "min": 0.0,
+          "max": 6.0,
+          "baseline": 1.32
+        }
+      ],
+      "profile_origin": "SYNTHETIC_PROTOTYPE_DATA"
+    },
+    {
+      "product_id": "wardah-anti-dandruff-shampoo",
+      "brand": "Wardah",
+      "product_name": "Anti Dandruff Shampoo",
+      "category_id": "shampoo",
+      "category_name": "Shampoo",
+      "factors": [
+        {
+          "key": "factor_a_pct",
+          "label": "Primary surfactant",
+          "unit": "%",
+          "min": 0.0,
+          "max": 20.0,
+          "baseline": 10.0
+        },
+        {
+          "key": "factor_b_pct",
+          "label": "Conditioning system",
+          "unit": "%",
+          "min": 0.0,
+          "max": 6.0,
+          "baseline": 2.0
+        },
+        {
+          "key": "factor_c_pct",
+          "label": "Rheology modifier",
+          "unit": "%",
+          "min": 0.0,
+          "max": 5.0,
+          "baseline": 1.2
+        }
+      ],
+      "profile_origin": "SYNTHETIC_PROTOTYPE_DATA"
+    },
+    {
+      "product_id": "putri-ginseng-shampoo",
+      "brand": "Putri",
+      "product_name": "Shampoo with Ginseng Extract",
+      "category_id": "shampoo",
+      "category_name": "Shampoo",
+      "factors": [
+        {
+          "key": "factor_a_pct",
+          "label": "Primary surfactant",
+          "unit": "%",
+          "min": 0.0,
+          "max": 20.0,
+          "baseline": 9.2
+        },
+        {
+          "key": "factor_b_pct",
+          "label": "Conditioning system",
+          "unit": "%",
+          "min": 0.0,
+          "max": 6.0,
+          "baseline": 1.84
+        },
+        {
+          "key": "factor_c_pct",
+          "label": "Rheology modifier",
+          "unit": "%",
+          "min": 0.0,
+          "max": 5.0,
+          "baseline": 1.104
+        }
+      ],
+      "profile_origin": "SYNTHETIC_PROTOTYPE_DATA"
+    },
+    {
+      "product_id": "kahf-brightening-cooling-body-wash",
+      "brand": "Kahf",
+      "product_name": "Brightening and Cooling Body Wash",
+      "category_id": "body_wash",
+      "category_name": "Body Wash",
+      "factors": [
+        {
+          "key": "factor_a_pct",
+          "label": "Primary surfactant",
+          "unit": "%",
+          "min": 0.0,
+          "max": 18.0,
+          "baseline": 9.0
+        },
+        {
+          "key": "factor_b_pct",
+          "label": "Secondary surfactant",
+          "unit": "%",
+          "min": 0.0,
+          "max": 10.0,
+          "baseline": 4.0
+        },
+        {
+          "key": "factor_c_pct",
+          "label": "Humectant system",
+          "unit": "%",
+          "min": 0.0,
+          "max": 8.0,
+          "baseline": 2.5
+        }
+      ],
+      "profile_origin": "SYNTHETIC_PROTOTYPE_DATA"
+    },
+    {
+      "product_id": "biodef-mint-green-tea-body-wash",
+      "brand": "Biodef",
+      "product_name": "Natural Protection Mint–Green Tea Body Wash",
+      "category_id": "body_wash",
+      "category_name": "Body Wash",
+      "factors": [
+        {
+          "key": "factor_a_pct",
+          "label": "Primary surfactant",
+          "unit": "%",
+          "min": 0.0,
+          "max": 18.0,
+          "baseline": 8.1
+        },
+        {
+          "key": "factor_b_pct",
+          "label": "Secondary surfactant",
+          "unit": "%",
+          "min": 0.0,
+          "max": 10.0,
+          "baseline": 3.6
+        },
+        {
+          "key": "factor_c_pct",
+          "label": "Humectant system",
+          "unit": "%",
+          "min": 0.0,
+          "max": 8.0,
+          "baseline": 2.25
+        }
+      ],
+      "profile_origin": "SYNTHETIC_PROTOTYPE_DATA"
+    },
+    {
+      "product_id": "wardah-colorfit-matte-foundation",
+      "brand": "Wardah",
+      "product_name": "Colorfit Matte Foundation",
+      "category_id": "foundation",
+      "category_name": "Foundation",
+      "factors": [
+        {
+          "key": "factor_a_pct",
+          "label": "Pigment / powder phase",
+          "unit": "%",
+          "min": 0.0,
+          "max": 25.0,
+          "baseline": 14.0
+        },
+        {
+          "key": "factor_b_pct",
+          "label": "Emollient system",
+          "unit": "%",
+          "min": 0.0,
+          "max": 18.0,
+          "baseline": 8.0
+        },
+        {
+          "key": "factor_c_pct",
+          "label": "Structurant / film former",
+          "unit": "%",
+          "min": 0.0,
+          "max": 10.0,
+          "baseline": 4.0
+        }
+      ],
+      "profile_origin": "SYNTHETIC_PROTOTYPE_DATA"
+    },
+    {
+      "product_id": "make-over-powerstay-foundation",
+      "brand": "Make Over",
+      "product_name": "Powerstay Total Cover Matte Cream Foundation",
+      "category_id": "foundation",
+      "category_name": "Foundation",
+      "factors": [
+        {
+          "key": "factor_a_pct",
+          "label": "Pigment / powder phase",
+          "unit": "%",
+          "min": 0.0,
+          "max": 25.0,
+          "baseline": 15.12
+        },
+        {
+          "key": "factor_b_pct",
+          "label": "Emollient system",
+          "unit": "%",
+          "min": 0.0,
+          "max": 18.0,
+          "baseline": 8.64
+        },
+        {
+          "key": "factor_c_pct",
+          "label": "Structurant / film former",
+          "unit": "%",
+          "min": 0.0,
+          "max": 10.0,
+          "baseline": 4.32
+        }
+      ],
+      "profile_origin": "SYNTHETIC_PROTOTYPE_DATA"
+    },
+    {
+      "product_id": "wardah-exclusive-matte-lip-cream",
+      "brand": "Wardah",
+      "product_name": "Exclusive Matte Lip Cream",
+      "category_id": "lip_cream",
+      "category_name": "Lip Cream",
+      "factors": [
+        {
+          "key": "factor_a_pct",
+          "label": "Pigment phase",
+          "unit": "%",
+          "min": 0.0,
+          "max": 25.0,
+          "baseline": 13.0
+        },
+        {
+          "key": "factor_b_pct",
+          "label": "Emollient system",
+          "unit": "%",
+          "min": 0.0,
+          "max": 20.0,
+          "baseline": 9.0
+        },
+        {
+          "key": "factor_c_pct",
+          "label": "Film former / structurant",
+          "unit": "%",
+          "min": 0.0,
+          "max": 12.0,
+          "baseline": 5.0
+        }
+      ],
+      "profile_origin": "SYNTHETIC_PROTOTYPE_DATA"
+    },
+    {
+      "product_id": "emina-creamatte",
+      "brand": "Emina",
+      "product_name": "Creamatte",
+      "category_id": "lip_cream",
+      "category_name": "Lip Cream",
+      "factors": [
+        {
+          "key": "factor_a_pct",
+          "label": "Pigment phase",
+          "unit": "%",
+          "min": 0.0,
+          "max": 25.0,
+          "baseline": 11.7
+        },
+        {
+          "key": "factor_b_pct",
+          "label": "Emollient system",
+          "unit": "%",
+          "min": 0.0,
+          "max": 20.0,
+          "baseline": 8.1
+        },
+        {
+          "key": "factor_c_pct",
+          "label": "Film former / structurant",
+          "unit": "%",
+          "min": 0.0,
+          "max": 12.0,
+          "baseline": 4.5
+        }
+      ],
+      "profile_origin": "SYNTHETIC_PROTOTYPE_DATA"
+    }
+  ],
+  "disclaimer": "Predicted / estimated and requires physical laboratory validation."
+}

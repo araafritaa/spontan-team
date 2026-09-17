@@ -7,7 +7,7 @@ from threading import Lock
 
 import numpy as np
 from Hackathon.rescue import RescueEngine
-from ml.predict_mercurio import SensoryPredictor, DEFAULT_ARTIFACT
+from ml.predict_product import SensoryPredictor, DEFAULT_ARTIFACT
 
 ROOT = Path(__file__).resolve().parents[1]
 _rescue_lock = Lock()
@@ -37,7 +37,7 @@ def rescue_versions():
 def _cached_sensory():
     predictor=SensoryPredictor()
     fixture=json.loads((DEFAULT_ARTIFACT/'prediction_example.json').read_text(encoding='utf-8'))
-    actual=predictor.predict(fixture['input'])['predicted_responses']
+    actual=predictor.predict(fixture['input']['product_id'],fixture['input']['composition'])['predicted_responses']
     np.testing.assert_allclose(list(actual.values()),list(fixture['expected_output'].values()),rtol=fixture['rtol'],atol=fixture['atol'])
     return predictor
 

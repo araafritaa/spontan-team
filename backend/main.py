@@ -12,7 +12,7 @@ from Hackathon.rescue import RescueValidationError
 from ml.preprocess_mercurio import DISCLAIMER
 from .predictor import load_rescue, load_sensory, rescue_versions
 from .reformulation import optimize
-from .schemas import RescueRequest, PredictRequest, OptimizeRequest, CatalogResponse, UnifiedRescueResponse, PredictionResponse, OptimizationResponse
+from .schemas import RescueRequest, PredictRequest, OptimizeRequest, CatalogResponse, UnifiedRescueResponse, PredictionResponse, OptimizationResponse, ProductCatalogResponse
 
 logger=logging.getLogger('spontan.backend')
 slots=BoundedSemaphore(2)
@@ -49,7 +49,7 @@ class BodyLimit:
             return await receive()
         await self.app(scope,replay,send)
 
-app=FastAPI(title='Spontan Formulation API',version='0.1.0',description='Historical shampoo rescue and model-assisted emulsion search. '+DISCLAIMER)
+app=FastAPI(title='Spontan Formulation API',version='0.1.0',description='Historical shampoo rescue and model-assisted synthetic product-profile search. '+DISCLAIMER)
 app.add_middleware(BodyLimit)
 origins=[origin.strip() for origin in os.getenv('CORS_ORIGINS','http://localhost:3000,http://127.0.0.1:3000').split(',') if origin.strip()]
 if '*' in origins:raise ValueError('Exact CORS origins required')
@@ -122,15 +122,19 @@ def rescue(payload:RescueRequest,engine=Depends(rescue_dependency)):
 
 @app.post('/ai-reformulation/predict',response_model=PredictionResponse,tags=['ai-reformulation'])
 def predict(payload:PredictRequest,predictor=Depends(sensory_dependency)):
-    try:return predictor.predict(payload.composition.model_dump())
-    except ValueError:raise HTTPException(422,'Predicted responses outside supported bounds') from None
+    try:return predictor.predict(payload.product_id,payload.composition.model_dump())
+    except ValueError:raise HTTPException(422,'Unknown product or composition outside its synthetic profile') from None
     except Exception as error:raise internal_failure(error,'/ai-reformulation/predict') from None
+
+@app.get('/ai-reformulation/products',response_model=ProductCatalogResponse,tags=['ai-reformulation'])
+def reformulation_products(predictor=Depends(sensory_dependency)):
+    return predictor.catalog()
 
 @app.post('/ai-reformulation/optimize',response_model=OptimizationResponse,tags=['ai-reformulation'])
 def reformulation(payload:OptimizeRequest,predictor=Depends(sensory_dependency)):
     if not slots.acquire(blocking=False):raise HTTPException(429,'Search capacity busy; retry later')
     try:
         return optimize(payload,predictor)
-    except ValueError:raise HTTPException(422,'Baseline prediction outside supported bounds') from None
+    except ValueError:raise HTTPException(422,'Unknown product, baseline, or bounds outside its synthetic profile') from None
     except Exception as error:raise internal_failure(error,'/ai-reformulation/optimize') from None
     finally:slots.release()
